@@ -6,7 +6,7 @@ if (!isset($_SESSION['user']['id'])) {
     header('Location: login.html');
     exit;
 }
-// koemntar
+
 $nama_user = htmlspecialchars($_SESSION['user']['nama']);
 $email_user = htmlspecialchars($_SESSION['user']['email']);
 $user_id = htmlspecialchars($_SESSION['user']['id']);
