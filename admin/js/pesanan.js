@@ -1,14 +1,31 @@
-// admin/js/pesanan.js
+// Variabel global
+let newOrders = [];
+let timerInterval;
+let fetchInterval;
+let idPesananAkanDihapus = null;
 
-// Fungsi menghitung menit berlalu
+// ==========================================
+// 1. FUNGSI WAKTU & FORMAT
+// ==========================================
 function getWaitingMinutes(createdAtStr) {
     const created = new Date(createdAtStr);
     const now = new Date();
     return Math.floor((now - created) / 60000);
 }
 
-let timerInterval;
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&';
+        if (m === '<') return '<';
+        if (m === '>') return '>';
+        return m;
+    });
+}
 
+// ==========================================
+// 2. FUNGSI RENDER TAMPILAN
+// ==========================================
 function renderNewOrders() {
     const container = document.getElementById('newOrdersContainer');
     if (!container) return;
@@ -83,7 +100,6 @@ function renderNewOrders() {
                     </div>
                     ` : ''}
 
-                    <!-- Alamat: hanya tampil jika jenis_pesanan === 'delivery' -->
                     ${order.jenis_pesanan === 'delivery' ? `
                     <div class="flex justify-between items-center gap-2 mb-4">
                         <p class="text-sm text-gray-600 truncate flex-1">
@@ -101,8 +117,8 @@ function renderNewOrders() {
                     `}
 
                     <div class="flex gap-2">
-                        <button onclick="terimaPesanan(${order.id})" class="flex-1 bg-[#4a5d42] hover:bg-[#35432f] text-white py-2 rounded-xl font-bold text-sm transition active:scale-95">
-                            ✅ Terima Pesanan
+                        <button onclick="terimaPesanan(${order.id})" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-xl font-bold text-sm transition active:scale-95">
+                            Terima Pesanan
                         </button>
                         <button onclick="tolakPesanan(${order.id})" class="px-4 bg-rose-100 hover:bg-rose-200 text-rose-600 rounded-xl font-bold text-sm transition active:scale-95">
                             <i class="fa-regular fa-trash-can"></i>
@@ -116,17 +132,31 @@ function renderNewOrders() {
     container.innerHTML = html;
 }
 
-function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    });
+// ==========================================
+// 3. FUNGSI POLLING AJAX (REAL-TIME)
+// ==========================================
+async function fetchPesananOtomatis() {
+    try {
+        const response = await fetch('api/load_pesanan.php');
+        const data = await response.json();
+        
+        if (data.error) {
+            console.error('API Error:', data.error);
+            return;
+        }
+
+        // Perbarui data pesanan dan render ulang HTML-nya
+        newOrders = data;
+        renderNewOrders();
+        
+    } catch (err) {
+        console.error('Koneksi Gagal:', err);
+    }
 }
 
-// Fungsi AJAX untuk menerima pesanan
+// ==========================================
+// 4. FUNGSI INTERAKSI (TERIMA / TOLAK)
+// ==========================================
 async function terimaPesanan(pesananId) {
     const formData = new FormData();
     formData.append('id', pesananId);
@@ -135,75 +165,85 @@ async function terimaPesanan(pesananId) {
         const response = await fetch('api/update_order_status.php', { method: 'POST', body: formData });
         const result = await response.json();
         if (result.success) {
-    // Hapus pesanan dari array newOrders
-    const index = newOrders.findIndex(o => o.id == pesananId);
-        if (index !== -1) newOrders.splice(index, 1);
-        renderNewOrders();
-        
-        // 🔔 Update badge notifikasi secara real-time
-        if (typeof updateNotifications === 'function') {
-            updateNotifications();
-        }
-        
-        if (typeof showToast === 'function') {
-            showToast(`✅ Pesanan #${pesananId} diterima dan masuk ke dashboard.`, 'success');
-        } else {
-            alert(`✅ Pesanan #${pesananId} diterima dan masuk ke dashboard.`);
-        }
-        
-        } else {
-            const msg = result.message || 'Terjadi kesalahan.';
-            if (typeof showToast === 'function') {
-                showToast('Gagal: ' + msg, 'error');
-            } else {
-                alert('Gagal: ' + msg);
-            }
-        }
-    } catch (err) {
-        console.error(err);
-        if (typeof showToast === 'function') {
-            showToast('Error: ' + err.message, 'error');
-        } else {
-            alert('Error: ' + err.message);
-        }
-    }
-}
-
-async function tolakPesanan(pesananId) {
-    if (!confirm('Hapus pesanan ini? Tindakan tidak dapat dibatalkan.')) return;
-    const formData = new FormData();
-    formData.append('id', pesananId);
-    formData.append('action', 'archive');
-    try {
-        const response = await fetch('api/update_order_status.php', { method: 'POST', body: formData });
-        const result = await response.json();
-        if (result.success) {
+            // Segera hapus dari layar
             const index = newOrders.findIndex(o => o.id == pesananId);
             if (index !== -1) newOrders.splice(index, 1);
             renderNewOrders();
+            
+            // Perbarui bel notifikasi
+            if (typeof updateNotifications === 'function') updateNotifications();
+            
             if (typeof showToast === 'function') {
-                showToast(`Pesanan #${pesananId} dihapus.`, 'success');
-            } else {
-                alert(`Pesanan #${pesananId} dihapus.`);
+                showToast(`✅ Pesanan #${pesananId} diterima ke dapur.`, 'success');
             }
         } else {
-            if (typeof showToast === 'function') {
-                showToast('Gagal menghapus.', 'error');
-            } else {
-                alert('Gagal menghapus.');
-            }
+            if (typeof showToast === 'function') showToast('Gagal: ' + result.message, 'error');
         }
     } catch (err) {
-        console.error(err);
-        if (typeof showToast === 'function') {
-            showToast('Error: ' + err.message, 'error');
-        } else {
-            alert('Error: ' + err.message);
-        }
+        if (typeof showToast === 'function') showToast('Error: ' + err.message, 'error');
     }
 }
 
-// Update timer setiap menit
+// 4a. Trigger Modal Tolak/Hapus Pesanan
+function tolakPesanan(pesananId) {
+    idPesananAkanDihapus = pesananId;
+    const modal = document.getElementById('deleteModal');
+    const modalBox = document.getElementById('deleteModalBox');
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modalBox.classList.remove('scale-95', 'opacity-0');
+        modalBox.classList.add('scale-100', 'opacity-100');
+    }, 10);
+}
+
+// 4b. Tutup Modal
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    const modalBox = document.getElementById('deleteModalBox');
+    
+    modalBox.classList.remove('scale-100', 'opacity-100');
+    modalBox.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => modal.classList.add('hidden'), 300);
+    idPesananAkanDihapus = null;
+}
+
+// 4c. Eksekusi Hapus dari Database Menggunakan Action 'reject'
+async function eksekusiHapusPesanan() {
+    if (!idPesananAkanDihapus) return;
+    
+    const formData = new FormData();
+    formData.append('id', idPesananAkanDihapus);
+    formData.append('action', 'reject');
+
+    try {
+        const response = await fetch('api/update_order_status.php', { method: 'POST', body: formData });
+        const result = await response.json();
+        
+        if (result.success) {
+            const index = newOrders.findIndex(o => o.id == idPesananAkanDihapus);
+            if (index !== -1) newOrders.splice(index, 1);
+            renderNewOrders();
+            
+            // Perbarui bel notifikasi
+            if (typeof updateNotifications === 'function') updateNotifications();
+            
+            if (typeof showToast === 'function') {
+                showToast(`Pesanan #${idPesananAkanDihapus} berhasil dihapus & stok dikembalikan.`, 'success');
+            }
+        } else {
+            if (typeof showToast === 'function') showToast('Gagal: ' + result.message, 'error');
+        }
+    } catch (err) {
+        if (typeof showToast === 'function') showToast('Error: ' + err.message, 'error');
+    } finally {
+        closeDeleteModal();
+    }
+}
+
+// ==========================================
+// 5. INISIALISASI (JALANKAN SAAT HALAMAN DIMUAT)
+// ==========================================
 function startTimerUpdater() {
     if (timerInterval) clearInterval(timerInterval);
     timerInterval = setInterval(() => {
@@ -211,12 +251,16 @@ function startTimerUpdater() {
             const orderId = el.getAttribute('data-id');
             const order = newOrders.find(o => o.id == orderId);
             if (order) {
-                const newMinutes = getWaitingMinutes(order.createdAt);
-                el.innerText = newMinutes;
+                el.innerText = getWaitingMinutes(order.createdAt);
             }
         });
     }, 60000);
 }
 
-renderNewOrders();
+// Panggil sekali saat buka halaman
+fetchPesananOtomatis();
 startTimerUpdater();
+
+// Ulangi panggilan ke server setiap 5 detik (5000ms)
+if (fetchInterval) clearInterval(fetchInterval);
+fetchInterval = setInterval(fetchPesananOtomatis, 5000);

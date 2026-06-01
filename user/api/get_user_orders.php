@@ -9,8 +9,8 @@ if (!isset($_SESSION['user']) || !isset($_SESSION['user']['id'])) {
 include_once __DIR__ . '/../../server/koneksi.php';
 $user_id = $_SESSION['user']['id']; 
 
-// Query utama: semua pesanan, namun untuk status 'selesai' hanya yang is_riwayat_hidden = 0
-$query = "SELECT p.id, p.total_harga, p.status, p.dibuat_pada, p.is_riwayat_hidden,
+// Query utama: DITAMBAHKAN p.dikonfirmasi
+$query = "SELECT p.id, p.total_harga, p.status, p.dibuat_pada, p.is_riwayat_hidden, p.dikonfirmasi,
                  pay.metode_pembayaran, pay.status_pembayaran,
                  pir.alamat, pir.deskripsi as catatan,
                  (SELECT rating FROM rating WHERE id_pesanan = p.id LIMIT 1) as rating
@@ -25,7 +25,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 $orders = [];
 while ($row = $result->fetch_assoc()) {
-    // Jika pesanan status 'selesai' dan is_riwayat_hidden = 1, lewati (tidak dikirim ke user)
+    // Jika pesanan status 'selesai' dan is_riwayat_hidden = 1, lewati
     if ($row['status'] === 'selesai' && $row['is_riwayat_hidden'] == 1) {
         continue;
     }
@@ -56,12 +56,15 @@ while ($row = $result->fetch_assoc()) {
     $stmt2->close();
     $ongkir = $row['total_harga'] - $total_menu;
     $orderName = (count($items) > 1) ? $firstItemName . ' dan lainnya' : $firstItemName;
+    
+    // Array Order DITAMBAHKAN 'dikonfirmasi'
     $orders[] = [
         'id'                => $id_pesanan,
         'nama'              => $orderName,
         'jumlah'            => $jumlah_item,
         'total'             => (int)$row['total_harga'],
         'status'            => $row['status'],
+        'dikonfirmasi'      => $row['dikonfirmasi'], // INI YANG DITAMBAHKAN
         'tgl'               => date('d/m/Y', strtotime($row['dibuat_pada'])),
         'tanggal'           => $row['dibuat_pada'],
         'metodePembayaran'  => strtoupper($row['metode_pembayaran'] ?? 'COD'),

@@ -11,7 +11,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Pengguna - Admin Sabana</title>
+    <title>Manajemen Pengguna</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,12 +24,11 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
     </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-slate-50">
     <div class="flex min-h-screen">
-        <!-- Sidebar (sama seperti di dashboard) -->
-        <div class="w-80 bg-gradient-to-br from-[#2c3e50] to-[#34495e] text-white fixed h-full overflow-y-auto shadow-lg">
+        <div class="w-80 bg-gradient-to-br from-[#2c3e50] to-[#34495e] text-white fixed h-full overflow-y-auto shadow-lg z-30">
             <div class="p-6">
-                <div class="flex items-center gap-3 bg-[#4a5d42]/30 p-4 rounded-xl mb-8">
+                <div class="flex items-center gap-3 bg-emerald-600/30 p-4 rounded-xl mb-8">
                     <i class="fa-solid fa-user-shield text-3xl"></i>
                     <h2 class="text-xl font-bold whitespace-nowrap">Admin Panel</h2>
                 </div>
@@ -60,7 +59,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                         <span>Pesanan</span>
                         <span id="pesananBadge" class="ml-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-0.5 hidden">0</span>
                     </a>
-                    <a href="pengguna.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 bg-[#4a5d42] text-white shadow-lg border-l-4 border-green-300 font-semibold">
+                    <a href="pengguna.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 bg-emerald-600 text-white shadow-lg border-l-4 border-emerald-300 font-semibold">
                         <i class="fa-solid fa-users w-5"></i> Pengguna
                     </a>
                     <a href="laporan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-2">
@@ -72,73 +71,108 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                     <a href="ulasan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-2">
                         <i class="fa-solid fa-star w-5"></i> Ulasan
                     </a>
-                    <a href="#" id="btnTriggerLogout" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-[#00f5ec] hover:bg-[#00f5ec]/20 hover:text-white mt-8 pt-4 border-t border-gray-700">
-                        <i class="fa-solid fa-sign-out-alt w-5"></i> Logout
-                    </a>
+                    <div class="mt-8 pt-4 border-t border-gray-700 w-full">
+                        <a href="#" id="btnTriggerLogout" class="flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold transition-all duration-300 shadow-md hover:shadow-rose-500/30 active:scale-95 w-full">
+                            <i class="fa-solid fa-sign-out-alt text-lg"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
                 </nav>
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="flex-1 ml-80 bg-slate-50 min-h-screen">
             <header class="sticky top-0 z-40 px-10 pt-6 pb-4 bg-slate-50/90 backdrop-blur-md border-b border-gray-200/50">
                 <div class="flex justify-between items-center bg-white p-4 pl-5 rounded-2xl shadow-sm border border-gray-100">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4a5d42]/20 to-[#4a5d42]/5 flex items-center justify-center border border-[#4a5d42]/10">
-                            <i class="fa-solid fa-users text-[#4a5d42] text-xl"></i>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600/20 to-emerald-600/5 flex items-center justify-center border border-emerald-600/10">
+                            <i class="fa-solid fa-users text-emerald-600 text-xl"></i>
                         </div>
                         <div>
                             <h1 class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600">Manajemen Pengguna</h1>
-                            <p class="text-xs text-gray-400">Kelola akun admin dan pelanggan</p>
+                            <p class="text-xs text-gray-400 font-medium mt-0.5">Kelola akun admin dan pelanggan</p>
                         </div>
                     </div>
-                    <button id="btnTambahUser" class="bg-[#4a5d42] hover:bg-[#35432f] text-white px-4 py-2 rounded-full text-sm font-bold shadow-md flex items-center gap-2 transition">
-                        <i class="fa-solid fa-plus"></i> Tambah Pengguna
+                    <button id="btnTambahUser" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-md shadow-emerald-500/30 flex items-center gap-2 transition active:scale-95">
+                        <i class="fa-solid fa-user-plus"></i> Tambah Pengguna
                     </button>
                 </div>
             </header>
 
             <div class="p-10">
-                <div class="bg-white rounded-2xl shadow-md p-6">
-                    <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
-                        <div class="relative">
-                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                            <input type="text" id="searchUser" placeholder="Cari nama atau email..." class="pl-10 pr-4 py-2 border rounded-xl w-64 focus:outline-none focus:ring-2 focus:ring-[#4a5d42]">
-                        </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div>
                         <div>
-                            <select id="filterRole" class="border rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#4a5d42]">
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Total Pengguna</p>
+                            <h3 class="text-2xl font-black text-gray-800 leading-none" id="statTotalUsers">0</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl"><i class="fa-solid fa-user-tag"></i></div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Pelanggan Aktif</p>
+                            <h3 class="text-2xl font-black text-gray-800 leading-none" id="statTotalPelanggan">0</h3>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center text-xl"><i class="fa-solid fa-user-shield"></i></div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Total Admin</p>
+                            <h3 class="text-2xl font-black text-gray-800 leading-none" id="statTotalAdmin">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                        <div class="relative w-full md:w-1/3">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" id="searchUser" placeholder="Cari nama atau email..." class="w-full pl-11 pr-4 py-2.5 border border-gray-200 bg-gray-50 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all text-sm font-medium">
+                        </div>
+                        <div class="w-full md:w-auto">
+                            <select id="filterRole" class="w-full md:w-48 appearance-none border border-gray-200 bg-gray-50 rounded-xl px-4 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer transition-all">
                                 <option value="semua">Semua Role</option>
                                 <option value="admin">Admin</option>
                                 <option value="pelanggan">Pelanggan</option>
                             </select>
                         </div>
                     </div>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border border-gray-200 rounded-xl">
-                            <thead class="bg-gray-100">
+                    <div class="overflow-x-auto rounded-xl border border-gray-100">
+                        <table class="min-w-full bg-white text-left">
+                            <thead class="bg-slate-50 border-b border-gray-200">
                                 <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase">ID</th>
-                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase">Nama</th>
-                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase">Email</th>
-                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase">Role</th>
-                                    <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase">Dibuat</th>
-                                    <th class="px-4 py-3 text-center text-xs font-bold text-gray-600 uppercase">Aksi</th>
+                                    <th class="px-5 py-4 text-xs font-black text-gray-500 uppercase tracking-wider">ID</th>
+                                    <th class="px-5 py-4 text-xs font-black text-gray-500 uppercase tracking-wider">Nama & Email</th>
+                                    <th class="px-5 py-4 text-xs font-black text-gray-500 uppercase tracking-wider">Role</th>
+                                    <th class="px-5 py-4 text-xs font-black text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-5 py-4 text-xs font-black text-gray-500 uppercase tracking-wider">Terakhir Login</th>
+                                    <th class="px-5 py-4 text-center text-xs font-black text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="userTableBody">
+                            <tbody id="userTableBody" class="divide-y divide-gray-100">
                                 <tr>
-                                    <td colspan="6" class="text-center py-8 text-gray-400">Memuat data...</td>
+                                    <td colspan="6" class="text-center py-12 text-gray-400 font-medium"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memuat data pengguna...</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="flex justify-between items-center mt-6" id="paginationContainer">
+                        <p class="text-sm font-medium text-gray-500" id="pageInfo">Menampilkan 0 dari 0 Pengguna</p>
+                        <div class="flex gap-2">
+                            <button id="btnPrevPage" class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"><i class="fa-solid fa-chevron-left"></i> Prev</button>
+                            <button id="btnNextPage" class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed">Next <i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Tambah/Edit User -->
-    <div id="userModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+    <div id="userModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="userModalOverlay"></div>
         <div class="bg-white rounded-2xl shadow-2xl p-6 z-10 w-full max-w-md transform scale-95 opacity-0 transition-all duration-300" id="userModalBox">
             <div class="flex justify-between items-center mb-4">
@@ -149,72 +183,97 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                 <input type="hidden" id="userId">
                 <div class="mb-3">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Lengkap</label>
-                    <input type="text" id="userNama" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#4a5d42]">
+                    <input type="text" id="userNama" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-emerald-600 outline-none">
                 </div>
                 <div class="mb-3">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                    <input type="email" id="userEmail" required class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#4a5d42]">
+                    <input type="email" id="userEmail" required class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-emerald-600 outline-none">
                 </div>
                 <div class="mb-3">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Role</label>
-                    <select id="userRole" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#4a5d42]">
+                    <select id="userRole" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-emerald-600 outline-none">
                         <option value="pelanggan">Pelanggan</option>
                         <option value="admin">Admin</option>
                     </select>
                 </div>
-                <div id="passwordField" class="mb-4">
+                <div id="passwordField" class="mb-5">
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-                    <input type="password" id="userPassword" class="w-full border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-[#4a5d42]">
-                    <p class="text-xs text-gray-400 mt-1">* Kosongkan jika tidak ingin mengubah (untuk edit)</p>
+                    <input type="password" id="userPassword" class="w-full border border-gray-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-emerald-600 outline-none">
+                    <p class="text-xs text-gray-400 mt-1 font-medium">* Kosongkan jika tidak ingin mengubah (untuk edit)</p>
                 </div>
                 <div class="flex gap-3">
-                    <button type="button" id="btnCancelUser" class="flex-1 modal-btn-cancel py-2 rounded-xl font-bold">Batal</button>
-                    <button type="submit" class="flex-1 modal-btn-confirm py-2 rounded-xl font-bold">Simpan</button>
+                    <button type="button" id="btnCancelUser" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-bold transition">Batal</button>
+                    <button type="submit" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold shadow-md shadow-emerald-500/30 transition">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Hapus User -->
-    <div id="deleteUserModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+    <div id="deleteUserModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="deleteUserOverlay"></div>
-        <div class="bg-white rounded-2xl shadow-2xl p-6 z-10 w-full max-w-sm transform scale-95 opacity-0 transition-all duration-300 text-center" id="deleteUserBox">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fa-solid fa-trash-can text-2xl text-red-600"></i>
+        <div class="bg-white rounded-2xl shadow-2xl p-8 z-10 w-full max-w-sm transform scale-95 opacity-0 transition-all duration-300 text-center" id="deleteUserBox">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                <i class="fa-solid fa-trash-can text-3xl text-red-600"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Hapus Pengguna?</h3>
-            <p class="text-gray-500 mb-6">Data pengguna akan dihapus secara permanen.</p>
+            <h3 class="text-xl font-extrabold text-gray-800 mb-2">Hapus Pengguna?</h3>
+            <p class="text-gray-500 mb-8 text-sm">Data pengguna ini akan dihapus secara permanen dari sistem.</p>
             <div class="flex gap-3">
-                <button id="btnCancelDeleteUser" class="flex-1 modal-btn-cancel py-2 rounded-xl font-bold">Batal</button>
-                <button id="btnConfirmDeleteUser" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl font-bold">Hapus</button>
+                <button id="btnCancelDeleteUser" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-bold transition">Batal</button>
+                <button id="btnConfirmDeleteUser" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-bold shadow-md transition">Hapus</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Reset Password -->
-    <div id="resetPasswordModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+    <div id="resetPasswordModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="resetPasswordOverlay"></div>
-        <div class="bg-white rounded-2xl shadow-2xl p-6 z-10 w-full max-w-sm transform scale-95 opacity-0 transition-all duration-300 text-center" id="resetPasswordBox">
-            <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fa-solid fa-key text-2xl text-yellow-600"></i>
+        <div class="bg-white rounded-2xl shadow-2xl p-8 z-10 w-full max-w-sm transform scale-95 opacity-0 transition-all duration-300 text-center" id="resetPasswordBox">
+            <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner">
+                <i class="fa-solid fa-key text-3xl text-yellow-600"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Reset Password</h3>
-            <p class="text-gray-500 mb-4">Password baru akan direset menjadi <span class="font-mono bg-gray-100 px-2 py-1 rounded">12345678</span></p>
+            <h3 class="text-xl font-extrabold text-gray-800 mb-2">Reset Password</h3>
+            <p class="text-gray-500 mb-6 text-sm">Password akan diubah menjadi <span class="font-mono bg-gray-100 font-bold px-2 py-1 rounded text-gray-800">12345678</span></p>
             <div class="flex gap-3">
-                <button id="btnCancelReset" class="flex-1 modal-btn-cancel py-2 rounded-xl font-bold">Batal</button>
-                <button id="btnConfirmReset" class="flex-1 bg-[#4a5d42] hover:bg-[#35432f] text-white py-2 rounded-xl font-bold">Reset</button>
+                <button id="btnCancelReset" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-bold transition">Batal</button>
+                <button id="btnConfirmReset" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold transition shadow-md">Ya, Reset</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Logout (sama seperti sebelumnya) -->
-    <div id="logoutModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">...</div>
+    <div id="blokirUserModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="blokirUserOverlay"></div>
+        <div class="bg-white rounded-2xl shadow-2xl p-8 z-10 w-full max-w-sm transform scale-95 opacity-0 transition-all duration-300 text-center" id="blokirUserBox">
+            <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-inner" id="blokirIconContainer">
+                <i class="fa-solid fa-ban text-3xl text-orange-600" id="blokirIcon"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-gray-800 mb-2" id="blokirTitle">Blokir Pengguna?</h3>
+            <p class="text-gray-500 mb-8 text-sm" id="blokirDesc">Pengguna ini tidak akan bisa login ke dalam aplikasi lagi.</p>
+            <div class="flex gap-3">
+                <button id="btnCancelBlokir" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-bold transition">Batal</button>
+                <button id="btnConfirmBlokir" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-xl font-bold shadow-md transition">Ya, Blokir</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="logoutModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="logoutOverlay"></div>
+        <div class="bg-white rounded-2xl shadow-2xl p-8 z-10 w-full max-w-sm transform scale-95 opacity-0 transition-all duration-300 flex flex-col items-center text-center" id="logoutModalBox">
+            <div class="w-16 h-16 bg-emerald-600/10 rounded-full flex items-center justify-center mb-5 shadow-inner">
+                <i class="fa-solid fa-arrow-right-from-bracket text-3xl text-emerald-600 ml-1"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-gray-800 mb-2">Konfirmasi Logout</h3>
+            <p class="text-gray-500 mb-8 text-sm">Apakah Anda yakin ingin keluar dari sesi ini?</p>
+            <div class="flex gap-4 w-full">
+                <button id="btnCancelLogout" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-xl font-bold text-center transition">Tidak</button>
+                <a href="process/logout.php" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold text-center flex items-center justify-center transition shadow-md">Iya, Logout</a>
+            </div>
+        </div>
+    </div>
 
     <script src="js/toast.js"></script>
-    <script src="js/pengguna.js"></script>
+    <script src="js/pengguna.js?v=<?= time() ?>"></script>
     <script src="js/notifications.js"></script>
     <script>
-        // Logout modal handler (copy dari dashboard)
+        // Logout modal handler
         const btnTrigger = document.getElementById('btnTriggerLogout');
         const logoutModal = document.getElementById('logoutModal');
         const logoutBox = document.getElementById('logoutModalBox');
@@ -228,16 +287,12 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                 logoutBox.classList.add('scale-100', 'opacity-100');
             }, 10);
         }
-
         function hideLogout() {
             logoutBox.classList.remove('scale-100', 'opacity-100');
             logoutBox.classList.add('scale-95', 'opacity-0');
             setTimeout(() => logoutModal.classList.add('hidden'), 300);
         }
-        if (btnTrigger) btnTrigger.addEventListener('click', (e) => {
-            e.preventDefault();
-            showLogout();
-        });
+        if (btnTrigger) btnTrigger.addEventListener('click', (e) => { e.preventDefault(); showLogout(); });
         if (logoutCancel) logoutCancel.addEventListener('click', hideLogout);
         if (logoutOverlay) logoutOverlay.addEventListener('click', hideLogout);
     </script>

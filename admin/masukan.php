@@ -18,7 +18,7 @@ $result = $conn->query($query);
 
 <head>
     <meta charset="UTF-8">
-    <title>Masukan Pelanggan - Admin Sabana</title>
+    <title>Masukan Pelanggan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -34,7 +34,7 @@ $result = $conn->query($query);
     <div class="flex min-h-screen">
         <div class="w-80 bg-gradient-to-br from-[#2c3e50] to-[#34495e] text-white fixed h-full overflow-y-auto shadow-lg z-30">
             <div class="p-6">
-                <div class="flex items-center gap-3 bg-[#4a5d42]/30 p-4 rounded-xl mb-8">
+                <div class="flex items-center gap-3 bg-emerald-600/30 p-4 rounded-xl mb-8">
                     <i class="fa-solid fa-user-shield text-3xl"></i>
                     <h2 class="text-xl font-bold">Admin Panel</h2>
                 </div>
@@ -65,13 +65,19 @@ $result = $conn->query($query);
                     </a>
                     <a href="pengguna.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-2"><i class="fa-solid fa-users w-5"></i> Pengguna</a>
                     <a href="laporan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-2"><i class="fa-solid fa-file-alt w-5"></i> Laporan</a>
-                    <a href="masukan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 bg-[#4a5d42] text-white shadow-lg border-l-4 border-green-300">
+                    <a href="masukan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 bg-emerald-600 text-white shadow-lg border-l-4 border-emerald-300">
                         <i class="fa-solid fa-message w-5"></i>
                         <span>Masukan</span>
                         <span id="masukanBadge" class="ml-2 bg-red-500 text-white text-[10px] font-black rounded-full px-2 py-0.5 hidden shadow-md animate-pulse">0</span>
                     </a>
                     <a href="ulasan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-2"><i class="fa-solid fa-star w-5"></i> Ulasan</a>
-                    <a href="#" id="btnTriggerLogout" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-[#00f5ec] hover:bg-[#00f5ec]/20 hover:text-white mt-8 pt-4 border-t border-gray-700"><i class="fa-solid fa-sign-out-alt w-5"></i> Logout</a>
+                    <!-- Pembatas visual -->
+                    <div class="mt-8 pt-4 border-t border-gray-700 w-full">
+                        <a href="#" id="btnTriggerLogout" class="flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold transition-all duration-300 shadow-md hover:shadow-rose-500/30 active:scale-95 w-full">
+                            <i class="fa-solid fa-sign-out-alt text-lg"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
                 </nav>
             </div>
         </div>
@@ -79,7 +85,7 @@ $result = $conn->query($query);
         <div class="flex-1 ml-80 bg-slate-50 min-h-screen p-8">
             <div class="bg-white rounded-2xl shadow-md overflow-hidden">
                 <div class="border-b border-gray-200 px-6 py-4 flex flex-wrap justify-between items-center gap-3">
-                    <h1 class="text-2xl font-bold text-gray-800"><i class="fa-solid fa-message mr-2 text-emerald-600"></i> Masukan Pelanggan</h1>
+                    <h1 class="text-2xl font-bold text-gray-800"><i class="fa-solid fa-message mr-2 text-emerald-500"></i> Masukan Pelanggan</h1>
                     <div class="flex gap-2">
                         <button data-filter="semua" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300 transition ring-2 ring-offset-2 ring-gray-500">Semua</button>
                         <button data-filter="saran" class="filter-btn px-4 py-2 rounded-full text-sm font-semibold bg-blue-100 text-blue-700 hover:bg-blue-200">Saran</button>
@@ -104,7 +110,7 @@ $result = $conn->query($query);
             <p class="text-gray-500 mb-8 text-sm">Apakah Anda yakin ingin keluar dari sesi ini?</p>
             <div class="flex gap-4 w-full">
                 <button id="btnCancelLogout" class="flex-1 bg-gray-200 hover:bg-gray-300 py-3 rounded-xl font-bold transition">Tidak</button>
-                <a href="process/logout.php" class="flex-1 bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-800 hover:to-emerald-700 text-white py-3 rounded-xl font-bold text-center transition">Iya, Logout</a>
+                <a href="process/logout.php" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold text-center transition">Iya, Logout</a>
             </div>
         </div>
     </div>
@@ -119,6 +125,7 @@ $result = $conn->query($query);
                                     ?>;
     </script>
     <script src="js/masukan.js?v=<?= time() ?>"></script>
+    <script src="js/notifications.js"></script>
     <script src="js/sidebar-admin.js?v=<?= time() ?>"></script>
 </body>
 

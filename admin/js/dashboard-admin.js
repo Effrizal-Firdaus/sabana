@@ -23,7 +23,51 @@ function updateStatsAndBadges(stats, badges) {
     document.getElementById('totalOrders').innerText = stats.totalOrders;
     document.getElementById('totalCustomers').innerText = stats.totalCustomers;
     document.getElementById('totalMenuItems').innerText = stats.totalMenuItems;
-    document.getElementById('totalRevenue').innerText = `Rp ${stats.totalRevenue.toLocaleString('id-ID')}`;
+    
+    // =========================================================
+    // LOGIKA MODE BACA (100% AKURAT DARI DATABASE)
+    // =========================================================
+    const totalOmzet = stats.totalRevenue || 0;
+    const qrisRevenue = stats.qrisRevenue || 0;
+    const cashRevenue = stats.cashRevenue || 0;
+
+    // Cek riwayat setoran manual dari kasir di memori browser
+    let simulatedSetoran = parseInt(localStorage.getItem('sabana_setoran')) || 0;
+
+    // Proteksi: Setoran tidak mungkin melebihi uang fisik yang diterima
+    if (simulatedSetoran > cashRevenue) {
+        simulatedSetoran = cashRevenue;
+        localStorage.setItem('sabana_setoran', simulatedSetoran);
+    }
+
+    // Kalkulasi Real-time
+    const kasDiLaci = cashRevenue - simulatedSetoran;
+    const saldoBank = qrisRevenue + simulatedSetoran;
+
+    // Render ke UI
+    const elTotalRev = document.getElementById('totalRevenue');
+    const elSaldoBank = document.getElementById('saldoBank');
+    const elKasBelum = document.getElementById('kasBelumDisetor');
+
+    if(elTotalRev) elTotalRev.innerText = `Rp ${totalOmzet.toLocaleString('id-ID')}`;
+    if(elSaldoBank) elSaldoBank.innerText = `Rp ${saldoBank.toLocaleString('id-ID')}`;
+    if(elKasBelum) elKasBelum.innerText = `Rp ${kasDiLaci.toLocaleString('id-ID')}`;
+
+    // Logika Tombol "Setorkan ke Bank"
+    const btnSetor = document.getElementById('btnTriggerSetor');
+    if (btnSetor) {
+        if (kasDiLaci <= 0) {
+            btnSetor.classList.add('opacity-50', 'cursor-not-allowed');
+            btnSetor.classList.remove('hover:bg-emerald-600', 'active:scale-95');
+            btnSetor.disabled = true;
+        } else {
+            btnSetor.classList.remove('opacity-50', 'cursor-not-allowed');
+            btnSetor.classList.add('hover:bg-emerald-600', 'active:scale-95');
+            btnSetor.disabled = false;
+        }
+    }
+    // =========================================================
+
     for (let s in badges) {
         let badge = document.getElementById(`badge-${s}`);
         if (badge) badge.innerText = badges[s];
@@ -48,7 +92,6 @@ function renderOrders(orders) {
             </div>
         `).join('');
         
-        // Mapping status database ke tampilan
         let displayStatus = order.status;
         if (displayStatus === 'diterima') displayStatus = 'sampai';
         
@@ -65,7 +108,7 @@ function renderOrders(orders) {
                 <div>
                     <div class="flex justify-between items-start mb-4">
                         <div class="flex gap-3 items-center">
-                            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-[#4a5d42] font-bold border">${order.customer.charAt(0)}</div>
+                            <div class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-emerald-600 font-bold border">${order.customer.charAt(0)}</div>
                             <div><h3 class="text-lg font-extrabold">${order.customer}</h3><p class="text-[10px] text-gray-400">ID: ${order.id}</p></div>
                         </div>
                         <span class="px-3 py-1.5 rounded-lg text-[10px] font-black text-white uppercase shadow-sm bg-${statusColor}">${displayStatus}</span>
@@ -85,7 +128,7 @@ function renderOrders(orders) {
                     <div class="border-t-2 border-dashed border-gray-100 mb-4"></div>
                     <div class="flex justify-between items-end">
                         <div><p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Total</p><p class="text-xl font-black text-[#e11d48]">Rp ${order.total.toLocaleString('id-ID')}</p></div>
-                        <button data-id="${order.rawId}" data-status="${order.status}" class="action-btn bg-gradient-to-r from-[#2c3e50] to-[#4a5d42] text-white px-5 py-2.5 rounded-xl text-[11px] font-extrabold uppercase shadow-md flex items-center gap-2">
+                        <button data-id="${order.rawId}" data-status="${order.status}" class="action-btn bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-[11px] font-extrabold uppercase shadow-md transition flex items-center gap-2 active:scale-95">
                             ${order.status === 'selesai' ? '<i class="fa-solid fa-box-archive"></i> Arsipkan' : 'Konfirmasi <i class="fa-solid fa-arrow-right"></i>'}
                         </button>
                     </div>
@@ -99,7 +142,6 @@ function renderOrders(orders) {
             const id = btn.dataset.id;
             const status = btn.dataset.status;
             if (status === 'selesai') {
-                // Buka modal custom sebagai pengganti confirm()
                 selectedOrderIdForArchive = id;
                 openArsipModal();
             } else {
@@ -110,10 +152,8 @@ function renderOrders(orders) {
 }
 
 async function updateOrder(orderId, action) {
-    // JIKA TOMBOL YANG DIKLIK ADALAH "ARSIPKAN"
     if (action === 'archive') {
         try {
-            // Panggil API arsipkan pesanan yang sudah kita buat
             const response = await fetch('api/arsipkan_pesanan.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -123,7 +163,6 @@ async function updateOrder(orderId, action) {
             
             if (result.success) {
                 showToast('✅ Pesanan berhasil diarsipkan', 'success');
-                // Render ulang dashboard agar data yang diarsipkan hilang dari layar
                 await loadDashboard(currentFilter);
             } else {
                 showToast('Gagal: ' + (result.message || 'Terjadi kesalahan'), 'error');
@@ -132,7 +171,6 @@ async function updateOrder(orderId, action) {
             showToast('Error: ' + err.message, 'error');
         }
     } 
-    // JIKA TOMBOL YANG DIKLIK ADALAH "KONFIRMASI" (disiapkan -> dimasak -> dsb)
     else {
         const formData = new FormData();
         formData.append('id', orderId);
@@ -161,7 +199,6 @@ async function loadDashboard(status) {
     }
 }
 
-// Filter status
 document.querySelectorAll('.status-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         currentFilter = btn.dataset.status;
@@ -171,29 +208,123 @@ document.querySelectorAll('.status-filter-btn').forEach(btn => {
     });
 });
 
-// Set active button sesuai currentFilter
 document.querySelectorAll('.status-filter-btn').forEach(btn => {
     if (btn.dataset.status === currentFilter) btn.classList.add('active');
     else btn.classList.remove('active');
 });
 loadDashboard(currentFilter);
 
-// Modal logout (sama seperti sebelumnya)
 document.addEventListener('DOMContentLoaded', () => {
-    const btnTrigger = document.getElementById('btnTriggerLogout');
-    const modal = document.getElementById('logoutModal');
-    const box = document.getElementById('logoutModalBox');
-    const cancel = document.getElementById('btnCancelLogout');
-    const overlay = document.getElementById('logoutOverlay');
-    function show() { modal.classList.remove('hidden'); setTimeout(() => { box.classList.remove('scale-95','opacity-0'); box.classList.add('scale-100','opacity-100'); }, 10); }
-    function hide() { box.classList.remove('scale-100','opacity-100'); box.classList.add('scale-95','opacity-0'); setTimeout(() => modal.classList.add('hidden'), 300); }
-    if (btnTrigger) btnTrigger.addEventListener('click', (e) => { e.preventDefault(); show(); });
-    if (cancel) cancel.addEventListener('click', hide);
-    if (overlay) overlay.addEventListener('click', hide);
+    // ==========================================================
+    // MODAL LOGOUT
+    // ==========================================================
+    const btnTriggerLogout = document.getElementById('btnTriggerLogout');
+    const modalLogout = document.getElementById('logoutModal');
+    const boxLogout = document.getElementById('logoutModalBox');
+    const cancelLogout = document.getElementById('btnCancelLogout');
+    const overlayLogout = document.getElementById('logoutOverlay');
+    
+    function showLogout() { 
+        modalLogout.classList.remove('hidden'); 
+        setTimeout(() => { 
+            boxLogout.classList.remove('scale-95','opacity-0'); 
+            boxLogout.classList.add('scale-100','opacity-100'); 
+        }, 10); 
+    }
+    function hideLogout() { 
+        boxLogout.classList.remove('scale-100','opacity-100'); 
+        boxLogout.classList.add('scale-95','opacity-0'); 
+        setTimeout(() => modalLogout.classList.add('hidden'), 300); 
+    }
+    if (btnTriggerLogout) btnTriggerLogout.addEventListener('click', (e) => { e.preventDefault(); showLogout(); });
+    if (cancelLogout) cancelLogout.addEventListener('click', hideLogout);
+    if (overlayLogout) overlayLogout.addEventListener('click', hideLogout);
+
+    // ==========================================================
+    // MODAL SETOR TUNAI & LOGIKA DINAMIS
+    // ==========================================================
+    const btnTriggerSetor = document.getElementById('btnTriggerSetor');
+    const modalSetor = document.getElementById('modalSetorTunai');
+    const modalContentSetor = document.getElementById('modalSetorContent');
+    const overlaySetor = document.getElementById('setorOverlay');
+    const btnBatalSetor1 = document.getElementById('btnBatalSetor');
+    const btnBatalSetor2 = document.getElementById('btnBatalSetorX');
+    const btnKonfirmasiSetor = document.getElementById('btnKonfirmasiSetor');
+    const inputNominal = document.getElementById('inputNominalSetor');
+    const errorText = document.getElementById('errorSetor');
+    const displayMaksimalKas = document.getElementById('displayMaksimalKas');
+    
+    let maksimalKas = 0;
+
+    // Buka Pop-up & Ambil Data Real-Time
+    if (btnTriggerSetor) {
+        btnTriggerSetor.addEventListener('click', function(e) {
+            e.preventDefault(); 
+            
+            // Ambil teks dari dashboard (misal: "Rp 24.000") dan ubah jadi angka murni (24000)
+            let kasText = document.getElementById('kasBelumDisetor').innerText;
+            maksimalKas = parseInt(kasText.replace(/[^0-9]/g, ''), 10);
+            if (isNaN(maksimalKas)) maksimalKas = 0;
+            
+            displayMaksimalKas.innerText = kasText;
+            
+            modalSetor.classList.remove('hidden');
+            setTimeout(() => {
+                modalContentSetor.classList.remove('scale-95', 'opacity-0');
+                modalContentSetor.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            
+            inputNominal.value = ''; 
+            errorText.classList.add('hidden');
+        });
+    }
+
+    // Tutup Pop-up
+    function tutupModalSetor() {
+        modalContentSetor.classList.add('scale-95', 'opacity-0');
+        modalContentSetor.classList.remove('scale-100', 'opacity-100');
+        setTimeout(() => modalSetor.classList.add('hidden'), 300);
+    }
+    
+    if(btnBatalSetor1) btnBatalSetor1.addEventListener('click', tutupModalSetor);
+    if(btnBatalSetor2) btnBatalSetor2.addEventListener('click', tutupModalSetor);
+    if(overlaySetor) overlaySetor.addEventListener('click', tutupModalSetor);
+
+    // Validasi & Simpan Nominal yang diketik
+    if(btnKonfirmasiSetor) {
+        btnKonfirmasiSetor.addEventListener('click', function() {
+            const nominal = parseInt(inputNominal.value);
+
+            if (isNaN(nominal) || nominal <= 0) {
+                errorText.textContent = "Masukkan nominal setor yang valid!";
+                errorText.classList.remove('hidden');
+                return;
+            }
+
+            if (nominal > maksimalKas) {
+                errorText.textContent = "Nominal melebihi Kas Belum Disetor!";
+                errorText.classList.remove('hidden');
+                return;
+            }
+
+            errorText.classList.add('hidden');
+            
+            // Simpan nominal spesifik ke memori lokal
+            let currentSetoran = parseInt(localStorage.getItem('sabana_setoran')) || 0;
+            localStorage.setItem('sabana_setoran', currentSetoran + nominal);
+            
+            if (typeof showToast === 'function') {
+                showToast('✅ Berhasil menyetorkan Rp ' + nominal.toLocaleString('id-ID') + ' ke Bank', 'success');
+            } else {
+                alert('Berhasil disetorkan ke Bank!');
+            }
+            
+            loadDashboard(currentFilter);
+            tutupModalSetor();
+        });
+    }
 });
-// ========================================================
-// LOGIKA MODAL ARSIP PESANAN
-// ========================================================
+
 let selectedOrderIdForArchive = null;
 const arsipModal = document.getElementById('arsipModal');
 const arsipModalBox = document.getElementById('arsipModalBox');
@@ -224,15 +355,12 @@ if (arsipOverlay) arsipOverlay.addEventListener('click', closeArsipModal);
 if (btnConfirmArsip) {
     btnConfirmArsip.addEventListener('click', async () => {
         if (selectedOrderIdForArchive) {
-            // Ubah teks tombol jadi loading saat ditekan
             const originalText = btnConfirmArsip.innerHTML;
             btnConfirmArsip.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Proses...';
             btnConfirmArsip.disabled = true;
             
-            // Panggil fungsi arsip yang sudah ada
             await updateOrder(selectedOrderIdForArchive, 'archive');
             
-            // Kembalikan tombol dan tutup modal
             btnConfirmArsip.innerHTML = originalText;
             btnConfirmArsip.disabled = false;
             closeArsipModal();

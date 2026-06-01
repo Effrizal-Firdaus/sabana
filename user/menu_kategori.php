@@ -123,38 +123,40 @@ $kategori_pilihan = isset($_GET['kategori']) ? strtolower($_GET['kategori']) : '
                 <div class="relative flex items-center justify-center mb-12 w-full">
                     <h2 class="text-3xl font-black text-gray-900 tracking-wide uppercase">MENU REGULER</h2>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
                     <?php
                     $items = [
-                        ['id' => 1, 'img' => 'Ayam_dada.png', 'name' => 'Ayam Goreng Dada', 'price' => 11000, 'desc' => 'Daging ayam tanpa tulang yang tebal dan juicy, dibalut tepung krispi dengan bumbu rahasia Sabana. Setiap gigitan memberikan ledakan gurih yang bikin nagih. Cocok untuk Anda yang suka daging padat dan mengenyangkan.'],
-                        ['id' => 2, 'img' => 'Ayam_Pahaatas.png', 'name' => 'Ayam Goreng Paha Atas', 'price' => 11000, 'desc' => 'Paha ayam bagian atas dengan tekstur super lembut dan bumbu meresap hingga ke tulang. Rasanya gurih alami, pas di lidah. Pilihan favorit bagi pecinta daging yang juicy dan mudah dipisahkan dari tulang.'],
-                        ['id' => 3, 'img' => 'paha_bawah.png', 'name' => 'Ayam Goreng Paha Bawah', 'price' => 9000, 'desc' => 'Paha bawah yang renyah di luar, empuk di dalam. Dagingnya kecil tapi sarat rasa. Sempurna untuk camilan atau lauk praktis. Sensasi kriuk khas Sabana di setiap suapan.'],
-                        ['id' => 4, 'img' => 'sayap.png', 'name' => 'Ayam Goreng Sayap', 'price' => 9000, 'desc' => 'Sayap ayam dengan kulit yang sangat renyah dan bumbu meresap. Cocok untuk Anda yang suka menikmati ayam sambil ngobrol santai. Rasanya gurih, sedikit pedas (jika pesan sambal), dan bikin ketagihan.']
+                        ['id' => 1, 'img' => 'Ayam_dada.png', 'name' => 'Ayam Goreng Dada', 'price' => 11000, 'desc' => 'Daging ayam tanpa tulang yang tebal dan juicy, dibalut tepung krispi dengan bumbu rahasia Sabana. Setiap gigitan memberikan ledakan gurih yang bikin nagih.'],
+                        ['id' => 2, 'img' => 'Ayam_Pahaatas.png', 'name' => 'Ayam Goreng Paha Atas', 'price' => 11000, 'desc' => 'Paha ayam bagian atas dengan tekstur super lembut dan bumbu meresap hingga ke tulang. Rasanya gurih alami, pas di lidah.'],
+                        ['id' => 3, 'img' => 'paha_bawah.png', 'name' => 'Ayam Goreng Paha Bawah', 'price' => 9000, 'desc' => 'Paha bawah yang renyah di luar, empuk di dalam. Dagingnya kecil tapi sarat rasa. Sempurna untuk camilan atau lauk praktis.'],
+                        ['id' => 4, 'img' => 'sayap.png', 'name' => 'Ayam Goreng Sayap', 'price' => 9000, 'desc' => 'Sayap ayam dengan kulit yang sangat renyah dan bumbu meresap. Cocok untuk Anda yang suka menikmati ayam sambil ngobrol santai.']
                     ];
                     foreach ($items as $item):
                         $stok_sementara = isset($item['stok']) ? (int)$item['stok'] : 8;
                         $isHabisKategori = ($stok_sementara <= 0);
                     ?>
-                        <a href="pesan.php?menu=<?= urlencode(json_encode($item)) ?>"
-                            class="group flex flex-col items-center cursor-pointer w-full no-underline menu-link">
-                            <div class="transition-all duration-500 ease-in-out <?= $isHabisKategori ? '' : 'group-hover:-translate-y-2 group-hover:scale-105' ?> w-full">
-                                <div class="menu-box w-full relative">
-                                    <?php if (isset($item['badge'])): ?>
-                                        <div class="absolute top-3 right-3 bg-sabanaGold text-sabanaDark text-xs font-bold px-2 py-1 rounded-md z-30 shadow-md"><?= $item['badge'] ?></div>
-                                    <?php endif; ?>
+                        <a href="pesan.php?menu=<?= urlencode(json_encode($item)) ?>" class="group flex flex-col cursor-pointer w-full no-underline h-full">
+                            
+                            <div class="w-full aspect-square relative flex items-center justify-center mb-4 md:mb-6">
+                                <?php if (isset($item['badge'])): ?>
+                                    <div class="absolute top-2 right-2 md:top-4 md:right-4 bg-sabanaGold text-sabanaDark text-[10px] md:text-xs font-extrabold px-3 py-1 rounded-full z-30 drop-shadow-sm"><?= $item['badge'] ?></div>
+                                <?php endif; ?>
 
-                                    <img src="../img/<?= $item['img'] ?>" alt="<?= $item['name'] ?>" class="menu-img <?= $isHabisKategori ? 'grayscale opacity-60' : '' ?>" />
+                                <!-- EFEK ZOOM 30% KEMBALI (scale-[1.2] & translate-y-4) -->
+                                <img src="../img/<?= $item['img'] ?>" alt="<?= $item['name'] ?>" 
+                                     class="w-full h-full object-contain transition-all duration-500 ease-out <?= $isHabisKategori ? 'grayscale opacity-60' : 'group-hover:scale-[1.2] group-hover:-translate-y-4 group-hover:drop-shadow-2xl' ?>" />
 
-                                    <?php if ($isHabisKategori): ?>
-                                        <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-all duration-300">
-                                            <span class="text-red-600 font-black text-xl md:text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,1)] tracking-widest uppercase">HABIS</span>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
+                                <?php if ($isHabisKategori): ?>
+                                    <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-all duration-300">
+                                        <span class="text-red-600 font-black text-xl md:text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,1)] tracking-widest uppercase">HABIS</span>
+                                    </div>
+                                <?php endif; ?>
                             </div>
-                            <div class="w-full mt-3 text-center">
-                                <h3 class="menu-title <?= $isHabisKategori ? 'text-red-500' : '' ?>"><?= $item['name'] ?></h3>
+                            
+                            <div class="w-full mt-auto text-center transition-transform duration-500 ease-out <?= $isHabisKategori ? '' : 'group-hover:-translate-y-2' ?>">
+                                <h3 class="text-lg md:text-xl font-black <?= $isHabisKategori ? 'text-red-500' : 'text-gray-900' ?> leading-tight tracking-tight"><?= $item['name'] ?></h3>
                             </div>
+
                         </a>
                     <?php endforeach; ?>
                 </div>
@@ -165,7 +167,7 @@ $kategori_pilihan = isset($_GET['kategori']) ? strtolower($_GET['kategori']) : '
                 <div class="relative flex items-center justify-center mb-16 w-full">
                     <h2 class="text-3xl md:text-4xl font-black text-gray-900 tracking-wide uppercase">MENU TAMBAHAN</h2>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-10">
                     <?php
                     $items = [
                         ['id' => 5, 'img' => 'burger_ayam.png', 'name' => 'Burger Ayam', 'price' => 12000, 'desc' => 'Roti empuk dengan isian ayam crispy, saus spesial Sabana, selada segar, dan timun.'],
@@ -182,25 +184,24 @@ $kategori_pilihan = isset($_GET['kategori']) ? strtolower($_GET['kategori']) : '
                         $stok_sementara = isset($item['stok']) ? (int)$item['stok'] : 8;
                         $isHabisKategori = ($stok_sementara <= 0);
                     ?>
-                        <a href="pesan.php?menu=<?= urlencode(json_encode($item)) ?>"
-                            class="group flex flex-col items-center cursor-pointer w-full no-underline menu-link">
-                            <div class="transition-all duration-500 ease-in-out <?= $isHabisKategori ? '' : 'group-hover:-translate-y-2 group-hover:scale-105' ?> w-full">
-                                <div class="menu-box w-full relative">
-                                    <?php if (isset($item['badge'])): ?>
-                                        <div class="absolute top-3 right-3 bg-sabanaGold text-sabanaDark text-xs font-bold px-2 py-1 rounded-md z-30 shadow-md"><?= $item['badge'] ?></div>
-                                    <?php endif; ?>
+                        <a href="pesan.php?menu=<?= urlencode(json_encode($item)) ?>" class="group flex flex-col cursor-pointer w-full no-underline h-full">
+                            <div class="w-full aspect-square relative flex items-center justify-center mb-4 md:mb-6">
+                                <?php if (isset($item['badge'])): ?>
+                                    <div class="absolute top-2 right-2 md:top-4 md:right-4 bg-sabanaGold text-sabanaDark text-[10px] md:text-xs font-extrabold px-3 py-1 rounded-full z-30 drop-shadow-sm"><?= $item['badge'] ?></div>
+                                <?php endif; ?>
 
-                                    <img src="../img/<?= $item['img'] ?>" alt="<?= $item['name'] ?>" class="menu-img <?= $isHabisKategori ? 'grayscale opacity-60' : '' ?>" />
-
-                                    <?php if ($isHabisKategori): ?>
-                                        <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-all duration-300">
-                                            <span class="text-red-600 font-black text-xl md:text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,1)] tracking-widest uppercase">HABIS</span>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
+                                <img src="../img/<?= $item['img'] ?>" alt="<?= $item['name'] ?>" 
+                                     class="w-full h-full object-contain transition-all duration-500 ease-out <?= $isHabisKategori ? 'grayscale opacity-60' : 'group-hover:scale-[1.2] group-hover:-translate-y-4 group-hover:drop-shadow-2xl' ?>" />
+                                
+                                <?php if ($isHabisKategori): ?>
+                                    <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-all duration-300">
+                                        <span class="text-red-600 font-black text-xl md:text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,1)] tracking-widest uppercase">HABIS</span>
+                                    </div>
+                                <?php endif; ?>
                             </div>
-                            <div class="w-full mt-3 text-center">
-                                <h3 class="menu-title <?= $isHabisKategori ? 'text-red-500' : '' ?>"><?= $item['name'] ?></h3>
+                            
+                            <div class="w-full mt-auto text-center transition-transform duration-500 ease-out <?= $isHabisKategori ? '' : 'group-hover:-translate-y-2' ?>">
+                                <h3 class="text-lg md:text-xl font-black <?= $isHabisKategori ? 'text-red-500' : 'text-gray-900' ?> leading-tight tracking-tight"><?= $item['name'] ?></h3>
                             </div>
                         </a>
                     <?php endforeach; ?>
@@ -212,7 +213,7 @@ $kategori_pilihan = isset($_GET['kategori']) ? strtolower($_GET['kategori']) : '
                 <div class="relative flex items-center justify-center mb-16 w-full">
                     <h2 class="text-3xl md:text-4xl font-black text-gray-900 tracking-wide uppercase">MENU PAKET</h2>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
                     <?php
                     $items = [
                         ['id' => 14, 'img' => 'paket1.png', 'name' => 'Ayam Dada + Nasi + Es Teh', 'price' => 20000, 'badge' => 'PAKET', 'desc' => 'Paket hemat untuk makan siang.'],
@@ -224,25 +225,24 @@ $kategori_pilihan = isset($_GET['kategori']) ? strtolower($_GET['kategori']) : '
                         $stok_sementara = isset($item['stok']) ? (int)$item['stok'] : 8;
                         $isHabisKategori = ($stok_sementara <= 0);
                     ?>
-                        <a href="pesan.php?menu=<?= urlencode(json_encode($item)) ?>"
-                            class="group flex flex-col items-center cursor-pointer w-full no-underline menu-link">
-                            <div class="transition-all duration-500 ease-in-out <?= $isHabisKategori ? '' : 'group-hover:-translate-y-2 group-hover:scale-105' ?> w-full relative">
-                                <div class="menu-box w-full relative">
-                                    <?php if (isset($item['badge'])): ?>
-                                        <div class="absolute top-3 right-3 bg-sabanaGold text-sabanaDark text-xs font-bold px-2 py-1 rounded-md z-30 shadow-md"><?= $item['badge'] ?></div>
-                                    <?php endif; ?>
+                        <a href="pesan.php?menu=<?= urlencode(json_encode($item)) ?>" class="group flex flex-col cursor-pointer w-full no-underline h-full">
+                            <div class="w-full aspect-square relative flex items-center justify-center mb-4 md:mb-6">
+                                <?php if (isset($item['badge'])): ?>
+                                    <div class="absolute top-2 right-2 md:top-4 md:right-4 bg-sabanaGold text-sabanaDark text-[10px] md:text-xs font-extrabold px-3 py-1 rounded-full z-30 drop-shadow-sm"><?= $item['badge'] ?></div>
+                                <?php endif; ?>
 
-                                    <img src="../img/<?= $item['img'] ?>" alt="<?= $item['name'] ?>" class="menu-img <?= $isHabisKategori ? 'grayscale opacity-60' : '' ?>" />
-
-                                    <?php if ($isHabisKategori): ?>
-                                        <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-all duration-300">
-                                            <span class="text-red-600 font-black text-xl md:text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,1)] tracking-widest uppercase">HABIS</span>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
+                                <img src="../img/<?= $item['img'] ?>" alt="<?= $item['name'] ?>" 
+                                     class="w-full h-full object-contain transition-all duration-500 ease-out <?= $isHabisKategori ? 'grayscale opacity-60' : 'group-hover:scale-[1.2] group-hover:-translate-y-4 group-hover:drop-shadow-2xl' ?>" />
+                                
+                                <?php if ($isHabisKategori): ?>
+                                    <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-all duration-300">
+                                        <span class="text-red-600 font-black text-xl md:text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,1)] tracking-widest uppercase">HABIS</span>
+                                    </div>
+                                <?php endif; ?>
                             </div>
-                            <div class="w-full mt-3 text-center">
-                                <h3 class="menu-title <?= $isHabisKategori ? 'text-red-500' : '' ?>"><?= $item['name'] ?></h3>
+                            
+                            <div class="w-full mt-auto text-center transition-transform duration-500 ease-out <?= $isHabisKategori ? '' : 'group-hover:-translate-y-2' ?>">
+                                <h3 class="text-lg md:text-xl font-black <?= $isHabisKategori ? 'text-red-500' : 'text-gray-900' ?> leading-tight tracking-tight"><?= $item['name'] ?></h3>
                             </div>
                         </a>
                     <?php endforeach; ?>
@@ -254,7 +254,7 @@ $kategori_pilihan = isset($_GET['kategori']) ? strtolower($_GET['kategori']) : '
                 <div class="relative flex items-center justify-center mb-16 w-full">
                     <h2 class="text-3xl md:text-4xl font-black text-gray-900 tracking-wide uppercase">MENU COMBO</h2>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
                     <?php
                     $items = [
                         ['id' => 18, 'img' => 'combo1.png', 'name' => '3 Pcs Paha Bawah', 'price' => 25000, 'badge' => 'HEMAT', 'desc' => '3 potong paha bawah ayam goreng krispi.'],
@@ -265,25 +265,24 @@ $kategori_pilihan = isset($_GET['kategori']) ? strtolower($_GET['kategori']) : '
                         $stok_sementara = isset($item['stok']) ? (int)$item['stok'] : 8;
                         $isHabisKategori = ($stok_sementara <= 0);
                     ?>
-                        <a href="pesan.php?menu=<?= urlencode(json_encode($item)) ?>"
-                            class="group flex flex-col items-center cursor-pointer w-full no-underline menu-link">
-                            <div class="transition-all duration-500 ease-in-out <?= $isHabisKategori ? '' : 'group-hover:-translate-y-2 group-hover:scale-105' ?> w-full relative">
-                                <div class="menu-box w-full relative">
-                                    <?php if (isset($item['badge'])): ?>
-                                        <div class="absolute top-3 right-3 bg-sabanaGold text-sabanaDark text-xs font-bold px-2 py-1 rounded-md z-30 shadow-md"><?= $item['badge'] ?></div>
-                                    <?php endif; ?>
+                        <a href="pesan.php?menu=<?= urlencode(json_encode($item)) ?>" class="group flex flex-col cursor-pointer w-full no-underline h-full">
+                            <div class="w-full aspect-square relative flex items-center justify-center mb-4 md:mb-6">
+                                <?php if (isset($item['badge'])): ?>
+                                    <div class="absolute top-2 right-2 md:top-4 md:right-4 bg-sabanaGold text-sabanaDark text-[10px] md:text-xs font-extrabold px-3 py-1 rounded-full z-30 drop-shadow-sm"><?= $item['badge'] ?></div>
+                                <?php endif; ?>
 
-                                    <img src="../img/<?= $item['img'] ?>" alt="<?= $item['name'] ?>" class="menu-img <?= $isHabisKategori ? 'grayscale opacity-60' : '' ?>" />
-
-                                    <?php if ($isHabisKategori): ?>
-                                        <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-all duration-300">
-                                            <span class="text-red-600 font-black text-xl md:text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,1)] tracking-widest uppercase">HABIS</span>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
+                                <img src="../img/<?= $item['img'] ?>" alt="<?= $item['name'] ?>" 
+                                     class="w-full h-full object-contain transition-all duration-500 ease-out <?= $isHabisKategori ? 'grayscale opacity-60' : 'group-hover:scale-[1.2] group-hover:-translate-y-4 group-hover:drop-shadow-2xl' ?>" />
+                                
+                                <?php if ($isHabisKategori): ?>
+                                    <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-all duration-300">
+                                        <span class="text-red-600 font-black text-xl md:text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,1)] tracking-widest uppercase">HABIS</span>
+                                    </div>
+                                <?php endif; ?>
                             </div>
-                            <div class="w-full mt-3 text-center">
-                                <h3 class="menu-title <?= $isHabisKategori ? 'text-red-500' : '' ?>"><?= $item['name'] ?></h3>
+                            
+                            <div class="w-full mt-auto text-center transition-transform duration-500 ease-out <?= $isHabisKategori ? '' : 'group-hover:-translate-y-2' ?>">
+                                <h3 class="text-lg md:text-xl font-black <?= $isHabisKategori ? 'text-red-500' : 'text-gray-900' ?> leading-tight tracking-tight"><?= $item['name'] ?></h3>
                             </div>
                         </a>
                     <?php endforeach; ?>

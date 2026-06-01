@@ -9,7 +9,7 @@ $nama_user   = $sudah_login ? htmlspecialchars($_SESSION['user']['nama']) : '';
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sabana Fried Chicken - Pilihan Keluarga Indonesia</title>
+    <title>Sabana Fried Chicken</title>
 
     <!-- CDN Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -149,23 +149,57 @@ $nama_user   = $sudah_login ? htmlspecialchars($_SESSION['user']['nama']) : '';
     <!-- KEUNGGULAN SECTION -->
     <section id="keunggulan" class="py-20 bg-white">
         <div class="container mx-auto px-6">
-            <h2 class="text-3xl font-black text-center tracking-wide uppercase">Mengapa Memilih Sabana?</h2>
+            <h2 class="text-3xl font-black text-center tracking-wide uppercase mb-12">Mengapa Memilih Sabana?</h2>
             <div class="grid md:grid-cols-3 gap-8 text-center">
-                <div class="bg-gray-50 p-8 rounded-xl shadow border border-gray-100 hover:shadow-lg transition">
-                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-sabanaRed text-3xl mb-6"><i class="fas fa-check-circle"></i></div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">100% Halal</h3>
-                    <p class="text-gray-600">Proses penyembelihan dan pengolahan sesuai syariat Islam dan standar SOP ketat.</p>
+                
+                <!-- Kartu 1: 100% Halal -->
+                <div class="bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-red-400 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer relative overflow-hidden">
+                    <!-- Watermark Latar Belakang -->
+                    <div class="absolute -right-4 -bottom-4 opacity-5 text-red-500 group-hover:scale-110 group-hover:-translate-y-3 transition-transform duration-500">
+                        <i class="fas fa-check-circle text-9xl"></i>
+                    </div>
+                    
+                    <div class="relative z-10">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-sabanaRed text-3xl mb-6 group-hover:bg-red-500 group-hover:text-white group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300 shadow-sm">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3 group-hover:text-red-600 transition-colors duration-300">100% Halal</h3>
+                        <p class="text-gray-600">Proses penyembelihan dan pengolahan sesuai syariat Islam dan standar SOP ketat.</p>
+                    </div>
                 </div>
-                <div class="bg-gray-50 p-8 rounded-xl shadow border border-gray-100 hover:shadow-lg transition">
-                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-yellow-100 text-sabanaGold text-3xl mb-6"><i class="fas fa-tag"></i></div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">Harga Ekonomis</h3>
-                    <p class="text-gray-600">Rasa bintang lima, harga kaki lima. Pas di kantong untuk seluruh keluarga.</p>
+                
+                <!-- Kartu 2: Harga Ekonomis -->
+                <div class="bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-yellow-400 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer relative overflow-hidden">
+                    <!-- Watermark Latar Belakang -->
+                    <div class="absolute -right-4 -bottom-4 opacity-5 text-yellow-500 group-hover:scale-110 group-hover:-translate-y-3 transition-transform duration-500">
+                        <i class="fas fa-tag text-9xl"></i>
+                    </div>
+                    
+                    <div class="relative z-10">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-yellow-100 text-sabanaGold text-3xl mb-6 group-hover:bg-yellow-400 group-hover:text-white group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 shadow-sm">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors duration-300">Harga Ekonomis</h3>
+                        <p class="text-gray-600">Rasa bintang lima, harga kaki lima. Pas di kantong untuk seluruh keluarga.</p>
+                    </div>
                 </div>
-                <div class="bg-gray-50 p-8 rounded-xl shadow border border-gray-100 hover:shadow-lg transition">
-                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-sabanaRed text-3xl mb-6"><i class="fas fa-store"></i></div>
-                    <h3 class="text-xl font-semibold text-gray-900 mb-3">3.000+ Gerai</h3>
-                    <p class="text-gray-600">Mudah ditemukan di mana saja, tersebar luas di Pulau Jawa dan Sumatra.</p>
+                
+                <!-- Kartu 3: 3.000+ Gerai -->
+                <div class="bg-gray-50 p-8 rounded-2xl shadow-sm border border-gray-100 hover:border-red-400 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group cursor-pointer relative overflow-hidden">
+                    <!-- Watermark Latar Belakang -->
+                    <div class="absolute -right-4 -bottom-4 opacity-5 text-red-500 group-hover:scale-110 group-hover:-translate-y-3 transition-transform duration-500">
+                        <i class="fas fa-store text-9xl"></i>
+                    </div>
+                    
+                    <div class="relative z-10">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-sabanaRed text-3xl mb-6 group-hover:bg-red-500 group-hover:text-white group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300 shadow-sm">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3 group-hover:text-red-600 transition-colors duration-300">3.000+ Gerai</h3>
+                        <p class="text-gray-600">Mudah ditemukan di mana saja, tersebar luas di Pulau Jawa dan Sumatra.</p>
+                    </div>
                 </div>
+                
             </div>
         </div>
     </section>
@@ -180,30 +214,51 @@ $nama_user   = $sudah_login ? htmlspecialchars($_SESSION['user']['nama']) : '';
             <div id="menu-wrapper">
                 <div id="group-0" class="mb-16 menu-group">
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+                        
                         <div class="group flex flex-col items-center cursor-pointer w-full">
-                            <div class="transition-all duration-500 ease-in-out group-hover:-translate-y-2 group-hover:scale-105 w-full relative"><img src="../img/Ayam_dada.png" alt="Ayam Goreng Dada" class="w-full aspect-square object-cover" /></div>
-                            <div class="w-full mt-3 text-center">
-                                <h3 class="text-md font-bold text-gray-800 group-hover:text-sabanaRed transition-colors duration-300 leading-snug line-clamp-2">Ayam Goreng Dada</h3>
+                            <div class="w-full aspect-square relative flex items-center justify-center bg-transparent overflow-visible mb-4 md:mb-6">
+                                <img src="../img/Ayam_dada.png" alt="Ayam Goreng Dada" 
+                                     class="w-full h-full object-contain drop-shadow-md transition-all duration-500 ease-out group-hover:!scale-[1.2] group-hover:!-translate-y-4 group-hover:drop-shadow-2xl group-hover:rotate-2" 
+                                     style="max-width: 100%; max-height: 100%;" />
+                            </div>
+                            <div class="w-full mt-auto text-center transition-transform duration-500 ease-out group-hover:!-translate-y-2">
+                                <h3 class="text-lg md:text-xl font-black text-gray-900 leading-tight tracking-tight">Ayam Goreng Dada</h3>
                             </div>
                         </div>
+
                         <div class="group flex flex-col items-center cursor-pointer w-full">
-                            <div class="transition-all duration-500 ease-in-out group-hover:-translate-y-2 group-hover:scale-105 w-full relative"><img src="../img/burger_ayam.png" alt="Burger Ayam" class="w-full aspect-square object-cover" /></div>
-                            <div class="w-full mt-3 text-center">
-                                <h3 class="text-md font-bold text-gray-800 group-hover:text-sabanaRed transition-colors duration-300 leading-snug line-clamp-2">Burger Ayam</h3>
+                            <div class="w-full aspect-square relative flex items-center justify-center bg-transparent overflow-visible mb-4 md:mb-6">
+                                <img src="../img/burger_ayam.png" alt="Burger Ayam" 
+                                     class="w-full h-full object-contain drop-shadow-md transition-all duration-500 ease-out group-hover:!scale-[1.2] group-hover:!-translate-y-4 group-hover:drop-shadow-2xl group-hover:-rotate-2" 
+                                     style="max-width: 100%; max-height: 100%;" />
+                            </div>
+                            <div class="w-full mt-auto text-center transition-transform duration-500 ease-out group-hover:!-translate-y-2">
+                                <h3 class="text-lg md:text-xl font-black text-gray-900 leading-tight tracking-tight">Burger Ayam</h3>
                             </div>
                         </div>
+
                         <div class="group flex flex-col items-center cursor-pointer w-full">
-                            <div class="transition-all duration-500 ease-in-out group-hover:-translate-y-2 group-hover:scale-105 w-full relative"><img src="../img/paket3.png" alt="Paket Ayam Geprek" class="w-full aspect-square object-cover" /></div>
-                            <div class="w-full mt-3 text-center">
-                                <h3 class="text-md font-bold text-gray-800 group-hover:text-sabanaRed transition-colors duration-300 leading-snug line-clamp-2">Ayam Sambal Geprek + Nasi + Es teh</h3>
+                            <div class="w-full aspect-square relative flex items-center justify-center bg-transparent overflow-visible mb-4 md:mb-6">
+                                <img src="../img/paket3.png" alt="Paket Ayam Geprek" 
+                                     class="w-full h-full object-contain drop-shadow-md transition-all duration-500 ease-out group-hover:!scale-[1.2] group-hover:!-translate-y-4 group-hover:drop-shadow-2xl group-hover:rotate-2" 
+                                     style="max-width: 100%; max-height: 100%;" />
+                            </div>
+                            <div class="w-full mt-auto text-center transition-transform duration-500 ease-out group-hover:!-translate-y-2">
+                                <h3 class="text-lg md:text-xl font-black text-gray-900 leading-tight tracking-tight">Ayam Sambal Geprek + Nasi + Es teh</h3>
                             </div>
                         </div>
+
                         <div class="group flex flex-col items-center cursor-pointer w-full">
-                            <div class="transition-all duration-500 ease-in-out group-hover:-translate-y-2 group-hover:scale-105 w-full relative"><img src="../img/combo3.png" alt="7 Pcs Paha Bawah" class="w-full aspect-square object-cover" /></div>
-                            <div class="w-full mt-3 text-center">
-                                <h3 class="text-md font-bold text-gray-800 group-hover:text-sabanaRed transition-colors duration-300 leading-snug line-clamp-2">7 Pcs Paha Bawah</h3>
+                            <div class="w-full aspect-square relative flex items-center justify-center bg-transparent overflow-visible mb-4 md:mb-6">
+                                <img src="../img/combo3.png" alt="7 Pcs Paha Bawah" 
+                                     class="w-full h-full object-contain drop-shadow-md transition-all duration-500 ease-out group-hover:!scale-[1.2] group-hover:!-translate-y-4 group-hover:drop-shadow-2xl group-hover:-rotate-2" 
+                                     style="max-width: 100%; max-height: 100%;" />
+                            </div>
+                            <div class="w-full mt-auto text-center transition-transform duration-500 ease-out group-hover:!-translate-y-2">
+                                <h3 class="text-lg md:text-xl font-black text-gray-900 leading-tight tracking-tight">7 Pcs Paha Bawah</h3>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>

@@ -60,6 +60,15 @@ window.addEventListener('DOMContentLoaded', function() {
       case 'empty':
         message = 'Email dan password wajib diisi.'; 
         break;
+        
+      // ==========================================
+      // [FITUR BARU]: PENANGANAN PESAN ERROR BLOKIR
+      // ==========================================
+      case 'blocked':
+        message = 'Maaf, Akun Anda telah ditangguhkan/diblokir oleh Admin.';
+        break;
+      // ==========================================
+        
       default: 
         message = 'Terjadi kesalahan pada sistem. Silakan coba lagi.';
     }

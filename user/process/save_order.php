@@ -15,7 +15,6 @@ if (!file_exists($path)) {
     echo json_encode(['success' => false, 'message' => 'Koneksi database tidak ditemukan: ' . $path]);
     exit;
 }
-include_once $path;
 
 $input = json_decode(file_get_contents('php://input'), true);
 if (!$input) {
@@ -44,9 +43,27 @@ if ($status_pembayaran_input === 'lunas') {
 
 $conn->begin_transaction();
 try {
-    // 1. Insert ke pesanan
-    $stmt = $conn->prepare("INSERT INTO pesanan (id_pengguna, jenis_pesanan, total_harga, status, dibuat_pada) VALUES (?, ?, ?, 'disiapkan', NOW())");
-    $stmt->bind_param('isi', $id_pengguna, $jenis_pesanan, $total_bayar);
+    // ========== LOGIKA NOMOR ANTRIAN (RESET TIAP HARI) ==========
+    date_default_timezone_set('Asia/Jakarta');
+    $tanggal_hari_ini = date('Y-m-d');
+
+    $query_antrian = "SELECT MAX(nomor_antrian) as max_antrian FROM pesanan WHERE DATE(dibuat_pada) = ?";
+    $stmt_antrian = $conn->prepare($query_antrian);
+    $stmt_antrian->bind_param("s", $tanggal_hari_ini);
+    $stmt_antrian->execute();
+    $result_antrian = $stmt_antrian->get_result();
+    $row_antrian = $result_antrian->fetch_assoc();
+
+    // Jika hari ini sudah ada pesanan, tambah 1. Jika belum ada, mulai dari 1.
+    $nomor_antrian_baru = ($row_antrian['max_antrian'] != null) ? (int)$row_antrian['max_antrian'] + 1 : 1;
+    $stmt_antrian->close();
+    // ============================================================
+
+    // 1. Insert ke pesanan (Ditambahkan kolom nomor_antrian)
+    $stmt = $conn->prepare("INSERT INTO pesanan (id_pengguna, jenis_pesanan, total_harga, nomor_antrian, status, dibuat_pada) VALUES (?, ?, ?, ?, 'disiapkan', NOW())");
+    
+    // Tipe data parameter: i (integer), s (string), i (integer), i (integer)
+    $stmt->bind_param('isii', $id_pengguna, $jenis_pesanan, $total_bayar, $nomor_antrian_baru);
     $stmt->execute();
     $id_pesanan = $conn->insert_id;
     $stmt->close();
@@ -62,7 +79,6 @@ try {
         $stmt->bind_param('iiiid', $id_pesanan, $id_menu, $jumlah, $harga, $subtotal);
         $stmt->execute();
         $stmt->close();
-
     }
 
     // 3. Pengiriman

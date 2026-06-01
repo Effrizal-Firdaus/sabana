@@ -11,7 +11,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan - Admin Sabana</title>
+    <title>Laporan & Statistik Pendapatan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
@@ -28,10 +28,10 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
 
 <body class="bg-gray-100">
     <div class="flex min-h-screen">
-        <!-- Sidebar (sama seperti di pengguna, dengan active pada Laporan) -->
+        <!-- Sidebar -->
         <div class="w-80 bg-gradient-to-br from-[#2c3e50] to-[#34495e] text-white fixed h-full overflow-y-auto shadow-lg">
             <div class="p-6">
-                <div class="flex items-center gap-3 bg-[#4a5d42]/30 p-4 rounded-xl mb-8">
+                <div class="flex items-center gap-3 bg-emerald-600/30 p-4 rounded-xl mb-8">
                     <i class="fa-solid fa-user-shield text-3xl"></i>
                     <h2 class="text-xl font-bold whitespace-nowrap">Admin Panel</h2>
                 </div>
@@ -65,7 +65,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                     <a href="pengguna.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-2">
                         <i class="fa-solid fa-users w-5"></i> Pengguna
                     </a>
-                    <a href="laporan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 bg-[#4a5d42] text-white shadow-lg border-l-4 border-green-300 font-semibold">
+                    <a href="laporan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 bg-emerald-600 text-white shadow-lg border-l-4 border-emerald-300 font-semibold">
                         <i class="fa-solid fa-file-alt w-5"></i> Laporan
                     </a>
                     <a href="masukan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-2">
@@ -74,9 +74,12 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                     <a href="ulasan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-2">
                         <i class="fa-solid fa-star w-5"></i> Ulasan
                     </a>
-                    <a href="#" id="btnTriggerLogout" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-[#00f5ec] hover:bg-[#00f5ec]/20 hover:text-white mt-8 pt-4 border-t border-gray-700">
-                        <i class="fa-solid fa-sign-out-alt w-5"></i> Logout
-                    </a>
+                    <div class="mt-8 pt-4 border-t border-gray-700">
+                        <a href="#" id="btnTriggerLogout" class="flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold transition-all duration-300 shadow-md hover:shadow-rose-500/30 active:scale-95">
+                            <i class="fa-solid fa-sign-out-alt text-lg"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
                 </nav>
             </div>
         </div>
@@ -86,8 +89,8 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
             <header class="sticky top-0 z-40 px-10 pt-6 pb-4 bg-slate-50/90 backdrop-blur-md border-b border-gray-200/50">
                 <div class="flex justify-between items-center bg-white p-4 pl-5 rounded-2xl shadow-sm border border-gray-100">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4a5d42]/20 to-[#4a5d42]/5 flex items-center justify-center border border-[#4a5d42]/10">
-                            <i class="fa-solid fa-chart-simple text-[#4a5d42] text-xl"></i>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600/20 to-emerald-600/5 flex items-center justify-center border border-emerald-600/10">
+                            <i class="fa-solid fa-chart-simple text-emerald-600 text-xl"></i>
                         </div>
                         <div>
                             <h1 class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600">Laporan & Statistik</h1>
@@ -126,7 +129,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                                 <option value="stok">Stok Menu</option>
                             </select>
                         </div>
-                        <button id="btnFilter" class="bg-[#4a5d42] hover:bg-[#35432f] text-white px-6 py-2 rounded-xl font-bold">Tampilkan</button>
+                        <button id="btnFilter" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl font-bold transition">Tampilkan</button>
                     </div>
                 </div>
 
@@ -138,8 +141,21 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
         </div>
     </div>
 
-    <!-- Modal Logout (sama) -->
-    <div id="logoutModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">...</div>
+    <!-- Modal Logout -->
+    <div id="logoutModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="logoutOverlay"></div>
+        <div class="bg-white rounded-2xl shadow-2xl p-8 z-10 w-full max-w-sm transform scale-95 opacity-0 transition-all duration-300 flex flex-col items-center text-center" id="logoutModalBox">
+            <div class="w-16 h-16 bg-emerald-600/10 rounded-full flex items-center justify-center mb-5 shadow-inner">
+                <i class="fa-solid fa-arrow-right-from-bracket text-3xl text-emerald-600 ml-1"></i>
+            </div>
+            <h3 class="text-xl font-extrabold text-gray-800 mb-2">Konfirmasi Logout</h3>
+            <p class="text-gray-500 mb-8 text-sm">Apakah Anda yakin ingin keluar dari sesi ini?</p>
+            <div class="flex gap-4 w-full">
+                <button id="btnCancelLogout" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-xl font-bold text-center transition">Tidak</button>
+                <a href="process/logout.php" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold text-center flex items-center justify-center transition shadow-md">Iya, Logout</a>
+            </div>
+        </div>
+    </div>
 
     <script src="js/toast.js"></script>
     <script src="js/laporan.js"></script>

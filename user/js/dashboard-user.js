@@ -110,10 +110,9 @@ document.addEventListener("DOMContentLoaded", function() {
         const orders = await fetchUserOrders();
         const pesananAktif = orders.filter(o => o.status !== 'selesai');
         
-        // PERBAIKAN: Hanya tampilkan pesanan yang selesai TAPI BELUM DIBERI RATING
+        // Hanya tampilkan pesanan yang selesai TAPI BELUM DIBERI RATING
         const pesananSelesai = orders.filter(o => o.status === 'selesai' && !o.rating);
 
-        // KODE KONDISI KOSONG (Pastikan blok ini ada agar sidebar tidak error)
         if (pesananAktif.length === 0 && pesananSelesai.length === 0) {
             contentDiv.innerHTML = `
                 <div class="max-w-3xl mx-auto py-20 px-6">
@@ -141,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div class="space-y-6">
         `;
 
-        // Pesanan Aktif
+        // ================= PESANAN AKTIF =================
         for (const order of pesananAktif) {
             let statusText = '', statusIcon = '', progressColor = '';
             let step = 0;
@@ -154,6 +153,28 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             const progressPercent = (step / 4) * 100;
             const hargaAsli = order.totalMenu || order.total;
+
+            // --- LOGIKA TOMBOL BATAL PESANAN ---
+            let cancelBtnHtml = '';
+            if (order.status === 'disiapkan') {
+                if (order.dikonfirmasi == 0) {
+                    // Jika admin belum konfirmasi, muncul tombol merah bisa dipencet
+                    cancelBtnHtml = `
+                    <div class="mt-4 text-right">
+                        <button class="btn-cancel-user-order px-4 py-2 text-sm font-bold text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-500 hover:text-white transition-all shadow-sm" data-order="${order.id}">
+                            <i class="fa-solid fa-xmark mr-1"></i> Batalkan Pesanan
+                        </button>
+                    </div>`;
+                } else {
+                    // Jika admin sudah terima, tombol terkunci
+                    cancelBtnHtml = `
+                    <div class="mt-4 text-right">
+                        <button disabled class="px-4 py-2 text-sm font-bold text-gray-500 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed opacity-70">
+                            <i class="fa-solid fa-lock mr-1"></i> Diproses Admin (Tidak dapat dibatalkan)
+                        </button>
+                    </div>`;
+                }
+            }
 
             html += `
                 <div class="order-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all">
@@ -185,15 +206,18 @@ document.addEventListener("DOMContentLoaded", function() {
                                 <span style="color: ${step >= 4 ? progressColor : '#9ca3af'}">Selesai</span>
                             </div>
                             <div class="text-xs text-gray-400 mt-2 text-right">
-                                <i class="fa-regular fa-clock"></i> Estimasi selesai: ${order.status === 'disiapkan' ? '30-40' : (order.status === 'dimasak' ? '20-30' : (order.status === 'dikirim' ? '10-20' : (order.status === 'diterima' ? '0-10' : 'Selesai')))} menit
+                                <i class="fa-regular fa-clock"></i> Estimasi selesai: ${order.status === 'disiapkan' ? '9-12' : (order.status === 'dimasak' ? '6-9' : (order.status === 'dikirim' ? '3-6' : (order.status === 'diterima' ? '0-3' : 'Selesai')))} menit
                             </div>
+                            
+                            ${cancelBtnHtml}
+
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        // Pesanan Selesai - hanya yang BELUM punya rating
+        // ================= PESANAN SELESAI =================
         for (const order of pesananSelesai) {
             const hargaAsli = order.totalMenu || order.total;
             const ratingHtml = `
@@ -265,14 +289,13 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
 
-        // ========== EVENT PILIH BINTANG ==========
+        // Event Pilih Bintang
         document.querySelectorAll('.star-rating-select').forEach(container => {
             const stars = container.querySelectorAll('i');
             stars.forEach(star => {
                 star.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const rate = parseInt(this.getAttribute('data-rate'));
-                    console.log('Bintang dipilih:', rate);
                     stars.forEach(s => {
                         const val = parseInt(s.getAttribute('data-rate'));
                         if (val <= rate) {
@@ -286,22 +309,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 });
             });
         });
-        // Event untuk textarea komentar: hentikan polling saat fokus, lanjutkan saat blur
-        function stopPolling() {
-            if (pollingInterval) {
-                clearInterval(pollingInterval);
-                pollingActive = false;
-            }
-        }
-        function resumePolling() {
-            if (!pollingActive && currentMenu === 'pesanan-saya') {
-                pollingInterval = setInterval(() => {
-                    renderPesananSaya();
-                    updateStats();
-                }, 5000);
-                pollingActive = true;
-            }
-        }
+        
+        // Polling handler saat isi ulasan
+        function stopPolling() { pollingActive = false; }
+        function resumePolling() { pollingActive = true; }
         document.querySelectorAll('textarea[id^="komentar-"]').forEach(textarea => {
             textarea.removeEventListener('focus', stopPolling);
             textarea.removeEventListener('blur', resumePolling);
@@ -309,7 +320,7 @@ document.addEventListener("DOMContentLoaded", function() {
             textarea.addEventListener('blur', resumePolling);
         });
 
-        // ========== EVENT KIRIM RATING ==========
+        // Event Kirim Rating
         document.querySelectorAll('.btn-submit-rating').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
@@ -335,16 +346,27 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (result.success) {
                         showToast('Rating dan komentar terkirim!', 'success');
                         sessionStorage.removeItem(`temp_rating_${orderId}`);
-                        // Refresh kedua halaman
-                        await renderPesananSaya();
-                        await renderRiwayat();
-                        await updateStats();
+                        await loadContent(currentMenu);
                     } else {
                         showToast(result.message || 'Gagal menyimpan', 'error');
                     }
                 } catch (err) {
                     showToast('Error: ' + err.message, 'error');
                 }
+            });
+        });
+
+        // ==========================================
+        // EVENT LISTENER BARU: BATALKAN PESANAN USER
+        // ==========================================
+        document.querySelectorAll('.btn-cancel-user-order').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const orderId = btn.getAttribute('data-order');
+                // Panggil fungsi modal cantik yang akan kita buat di bawah
+                openCancelOrderUserModal(orderId); 
             });
         });
     }
@@ -406,22 +428,46 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         function getImageForMenu(nama) {
+            // Ubah nama dari database menjadi huruf kecil semua agar mudah dideteksi
             const lowerName = nama.toLowerCase();
-            if (lowerName.includes('sayap')) return '../../img/sayap.png';
-            if (lowerName.includes('dada')) return '../../img/Ayam_dada.png';
-            if (lowerName.includes('paha atas')) return '../../img/Ayam_Pahaatas.png';
+
+            // ========================================================
+            // PRIORITAS 1: MENU PAKET & COMBO (Paling atas agar tidak bentrok)
+            // ========================================================
+            // Paket
+            if (lowerName.includes('dada + nasi')) return '../../img/paket1.png';
+            if (lowerName.includes('sayap + nasi')) return '../../img/paket2.png';
+            if (lowerName.includes('geprek')) return '../../img/paket3.png';
+            if (lowerName.includes('ijo')) return '../../img/paket4.png';
+            
+            // Combo
+            if (lowerName.includes('3 pcs')) return '../../img/combo1.png';
+            if (lowerName.includes('5 pcs')) return '../../img/combo2.png';
+            if (lowerName.includes('7 pcs')) return '../../img/combo3.png';
+
+            // ========================================================
+            // PRIORITAS 2: MENU REGULER (Ayam Satuan)
+            // ========================================================
+            if (lowerName.includes('paha atas')) return '../../img/Ayam_pahaatas.png';
             if (lowerName.includes('paha bawah')) return '../../img/paha_bawah.png';
+            // Harus ditaruh di bawah paha, agar kata 'dada' & 'sayap' tidak menimpa paket
+            if (lowerName.includes('dada')) return '../../img/Ayam_dada.png'; 
+            if (lowerName.includes('sayap')) return '../../img/sayap.png';
+
+            // ========================================================
+            // PRIORITAS 3: MENU TAMBAHAN & MINUMAN
+            // ========================================================
             if (lowerName.includes('burger')) return '../../img/burger_ayam.png';
             if (lowerName.includes('rice box')) return '../../img/rice_box.png';
             if (lowerName.includes('kentang')) return '../../img/kentang.png';
-            if (lowerName.includes('nasi putih')) return '../../img/nasi.png';
+            if (lowerName.includes('nasi putih') || lowerName === 'nasi') return '../../img/nasi.png';
             if (lowerName.includes('kulit')) return '../../img/kulit.png';
-            if (lowerName.includes('chicken strips')) return '../../img/strips.png';
+            if (lowerName.includes('strips')) return '../../img/strips.png';
             if (lowerName.includes('bakso')) return '../../img/bakso.png';
-            if (lowerName.includes('chicken roll')) return '../../img/roll.png';
-            if (lowerName.includes('es teh')) return '../../img/esteh.png';
-            if (lowerName.includes('paket')) return '../../img/paket1.png';
-            if (lowerName.includes('combo')) return '../../img/combo1.png';
+            if (lowerName.includes('roll')) return '../../img/roll.png';
+            if (lowerName.includes('es teh') || lowerName.includes('esteh')) return '../../img/esteh.png';
+
+            // Gambar default (jaga-jaga jika sewaktu-waktu Anda menambah menu baru di database tapi lupa update JS)
             return '../../img/Ayam_dada.png';
         }
 
@@ -559,13 +605,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bantuan-card bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-gray-100 hover:shadow-2xl transition-all duration-300">
-                        <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mb-4"><i class="fa-regular fa-circle-question text-2xl text-sabanaRed"></i></div>
+                        <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mb-4"><i class="fa-solid fa-handshake-angle text-2xl text-sabanaRed"></i></div>
                         <h3 class="text-xl font-bold text-gray-800 mb-2">Pusat Bantuan</h3>
                         <p class="text-gray-500 text-sm leading-relaxed mb-4">Temukan jawaban cepat untuk pertanyaan umum tentang pemesanan, pembayaran, dan pengiriman.</p>
                         <button id="openFaqBtn" class="inline-flex items-center gap-1 text-sabanaRed font-medium text-sm hover:gap-2 transition-all">Baca selengkapnya <i class="fa-solid fa-arrow-right text-xs"></i></button>
                     </div>
                     <div class="bantuan-card bg-gradient-to-br from-sabanaRed/5 via-white to-yellow-50 rounded-2xl shadow-xl p-6 border border-sabanaRed/20 hover:shadow-2xl transition-all duration-300">
-                        <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mb-4"><i class="fa-regular fa-headset text-2xl text-sabanaRed"></i></div>
+                        <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mb-4"><i class="fa-solid fa-phone-volume text-2xl text-sabanaRed"></i></div>
                         <h3 class="text-xl font-bold text-gray-800 mb-2">Hubungi Tim Kami</h3>
                         <p class="text-gray-500 text-sm leading-relaxed mb-4">Punya keluhan atau saran? Tim support kami siap mendengarkan dan membantu Anda.</p>
                         <a href="whatsapp://send?phone=628882269963&text=Halo%20Sabana%2C%20saya%20membutuhkan%20bantuan" class="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white px-5 py-2.5 rounded-full font-semibold text-sm transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105" <i class="fab fa-whatsapp"></i> Hubungi Kami </a>
@@ -964,6 +1010,94 @@ document.addEventListener("DOMContentLoaded", function() {
             } finally {
                 confirmDeleteRiwayat.innerHTML = originalText;
                 confirmDeleteRiwayat.disabled = false;
+            }
+        });
+    }
+    // ========== MODAL KONFIRMASI BATALKAN PESANAN (USER) ==========
+    function createCancelOrderUserModal() {
+        if (document.getElementById('cancelOrderUserModal')) return;
+        const modalDiv = document.createElement('div');
+        modalDiv.id = 'cancelOrderUserModal';
+        modalDiv.className = 'fixed inset-0 bg-black/60 z-[10005] flex items-center justify-center hidden transition-all duration-300 p-4';
+        
+        modalDiv.innerHTML = `
+            <div class="bg-white rounded-3xl max-w-sm w-full shadow-2xl transform transition-all scale-95 opacity-0" id="cancelOrderUserModalContent">
+                <div class="p-8 text-center">
+                    <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-5">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl text-red-600"></i>
+                    </div>
+                    <h3 class="text-xl font-black text-gray-800 mb-2">Batalkan Pesanan?</h3>
+                    <p class="text-gray-500 mb-6 text-sm">Apakah Anda yakin ingin membatalkan pesanan ini? Stok pesanan akan otomatis dikembalikan.</p>
+                    <div class="flex gap-3">
+                        <button id="cancelOrderNoBtn" class="flex-1 px-4 py-3 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-xl font-bold transition-colors">Tidak</button>
+                        <button id="cancelOrderYesBtn" class="flex-1 px-4 py-3 bg-sabanaRed text-white hover:bg-red-700 rounded-xl font-bold transition-all shadow-md hover:shadow-lg active:scale-95">Ya, Batalkan</button>
+                    </div>
+                </div>
+            </div>`;
+        document.body.appendChild(modalDiv);
+        return modalDiv;
+    }
+
+    let cancelOrderUserModal = document.getElementById('cancelOrderUserModal');
+    if (!cancelOrderUserModal) cancelOrderUserModal = createCancelOrderUserModal();
+    const cancelOrderUserModalContent = document.getElementById('cancelOrderUserModalContent');
+    const cancelOrderNoBtn = document.getElementById('cancelOrderNoBtn');
+    const cancelOrderYesBtn = document.getElementById('cancelOrderYesBtn');
+    let orderIdToCancelUser = null;
+
+    // Fungsi untuk memunculkan modal
+    function openCancelOrderUserModal(id) {
+        orderIdToCancelUser = id;
+        cancelOrderUserModal.classList.remove('hidden');
+        setTimeout(() => cancelOrderUserModalContent?.classList.remove('scale-95', 'opacity-0'), 10);
+    }
+
+    // Fungsi untuk menyembunyikan modal
+    function closeCancelOrderUserModal() {
+        cancelOrderUserModalContent?.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => cancelOrderUserModal.classList.add('hidden'), 300);
+        orderIdToCancelUser = null;
+    }
+
+    // Jika klik "Tidak" atau klik di luar kotak, tutup modal
+    if (cancelOrderNoBtn) cancelOrderNoBtn.addEventListener('click', closeCancelOrderUserModal);
+    if (cancelOrderUserModal) {
+        cancelOrderUserModal.addEventListener('click', (e) => {
+            if (e.target === cancelOrderUserModal) closeCancelOrderUserModal();
+        });
+    }
+
+    // Jika klik "Ya, Batalkan", eksekusi API
+    if (cancelOrderYesBtn) {
+        cancelOrderYesBtn.addEventListener('click', async () => {
+            if (!orderIdToCancelUser) return;
+            
+            const originalText = cancelOrderYesBtn.innerHTML;
+            cancelOrderYesBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Proses...';
+            cancelOrderYesBtn.disabled = true;
+
+            try {
+                const response = await fetch('../api/cancel_order_user.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ order_id: orderIdToCancelUser })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast('Pesanan berhasil dibatalkan!', 'success');
+                    closeCancelOrderUserModal();
+                    await loadContent(currentMenu); // Render ulang layar secara instan
+                } else {
+                    showToast(result.message || 'Gagal membatalkan pesanan', 'error');
+                    closeCancelOrderUserModal();
+                }
+            } catch (err) {
+                showToast('Error: ' + err.message, 'error');
+                closeCancelOrderUserModal();
+            } finally {
+                cancelOrderYesBtn.innerHTML = originalText;
+                cancelOrderYesBtn.disabled = false;
             }
         });
     }

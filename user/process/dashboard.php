@@ -10,10 +10,11 @@ $user_id = $_SESSION['user']['id'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Dashboard - Sabana Fried Chicken</title>
+    <title>Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,14 +34,15 @@ $user_id = $_SESSION['user']['id'];
         };
     </script>
 </head>
+
 <body class="bg-gray-50 text-gray-900 antialiased overflow-x-hidden font-poppins" data-user-id="<?= $user_id ?>" data-user-email="<?= $email_user ?>">
     <script>
-    window.userData = {
-        id: <?= json_encode($user_id) ?>,
-        nama: <?= json_encode($nama_user) ?>,
-        email: <?= json_encode($email_user) ?>
-    };
-</script>
+        window.userData = {
+            id: <?= json_encode($user_id) ?>,
+            nama: <?= json_encode($nama_user) ?>,
+            email: <?= json_encode($email_user) ?>
+        };
+    </script>
     <div class="flex min-h-screen">
         <!-- SIDEBAR -->
         <aside class="sidebar text-white">
@@ -63,7 +65,7 @@ $user_id = $_SESSION['user']['id'];
                     <a href="#" class="nav-item flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300" data-menu="bantuan">
                         <i class="fa-regular fa-circle-question w-5"></i> Bantuan & Laporan
                     </a>
-                    <a href="#" id="logoutBtn" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-red-400 hover:bg-red-500 hover:text-white mt-8 pt-4 border-t border-gray-700">
+                    <a href="#" id="logoutBtn" class="flex items-center gap-3 px-4 py-3 mt-8 rounded-xl transition-all duration-300 bg-sabanaGold hover:bg-yellow-500 text-sabanaDark font-bold shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                         <i class="fa-solid fa-right-from-bracket w-5"></i> Logout
                     </a>
                 </nav>
@@ -150,4 +152,5 @@ $user_id = $_SESSION['user']['id'];
 
     <script src="../js/dashboard-user.js"></script>
 </body>
+
 </html>

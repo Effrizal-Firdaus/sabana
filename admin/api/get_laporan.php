@@ -13,9 +13,10 @@ $selesai = $_GET['selesai'] ?? date('Y-m-d');
 $export = isset($_GET['export']) && $_GET['export'] === 'csv';
 
 if ($tipe === 'penjualan') {
+    // PERBAIKAN: Ubah dari status != 'disiapkan' menjadi status = 'selesai'
     $query = "SELECT DATE(dibuat_pada) as tanggal, COUNT(*) as jumlah, SUM(total_harga) as total 
               FROM pesanan 
-              WHERE status != 'disiapkan' AND dibuat_pada BETWEEN ? AND ?
+              WHERE status = 'selesai' AND dibuat_pada BETWEEN ? AND ?
               GROUP BY DATE(dibuat_pada) ORDER BY tanggal DESC";
     $stmt = $conn->prepare($query);
     $selesai_time = $selesai . ' 23:59:59';
@@ -39,11 +40,12 @@ if ($tipe === 'penjualan') {
     echo json_encode(['success' => true, 'laporan' => $laporan, 'total_keseluruhan' => $totalKeseluruhan]);
 }
 elseif ($tipe === 'produk') {
+    // PERBAIKAN: Ubah dari p.status != 'disiapkan' menjadi p.status = 'selesai'
     $query = "SELECT m.nama_menu, SUM(dp.jumlah) as total_terjual, SUM(dp.subtotal) as total_pendapatan
               FROM detail_pesanan dp
               JOIN pesanan p ON dp.id_pesanan = p.id
               JOIN menu m ON dp.id_menu = m.id
-              WHERE p.status != 'disiapkan' AND p.dibuat_pada BETWEEN ? AND ?
+              WHERE p.status = 'selesai' AND p.dibuat_pada BETWEEN ? AND ?
               GROUP BY dp.id_menu
               ORDER BY total_terjual DESC LIMIT 10";
     $stmt = $conn->prepare($query);

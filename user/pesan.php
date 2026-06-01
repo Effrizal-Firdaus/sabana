@@ -151,11 +151,35 @@ if (isset($deskripsi_baru[$menu['name']])) {
     $menu['desc'] = $deskripsi_baru[$menu['name']];
 }
 
+// KALKULASI RATING GABUNGAN (BASELINE DINAMIS + REAL DATABASE)
 // ======================================================================
-// KALKULASI RATING GABUNGAN (BASELINE STATIS + REAL DATABASE)
-// ======================================================================
-$base_rating = 4.5; // Nilai bintang dasar
-$base_ulasan = 56;  // Jumlah ulasan dasar
+// Data manipulasi khusus untuk memicu psikologi Social Proof pelanggan
+$baseline_data = [
+    'Ayam Goreng Dada' => ['rating' => 4.8, 'ulasan' => 2150],
+    'Ayam Goreng Paha Atas' => ['rating' => 4.9, 'ulasan' => 1840],
+    'Ayam Goreng Paha Bawah' => ['rating' => 4.7, 'ulasan' => 1520],
+    'Ayam Goreng Sayap' => ['rating' => 4.6, 'ulasan' => 890],
+    'Burger Ayam' => ['rating' => 4.6, 'ulasan' => 980],
+    'Rice Box' => ['rating' => 4.5, 'ulasan' => 750],
+    'Kentang Goreng' => ['rating' => 4.7, 'ulasan' => 1240],
+    'Nasi Putih' => ['rating' => 4.9, 'ulasan' => 3100], 
+    'Kulit Krispy' => ['rating' => 4.9, 'ulasan' => 1750], 
+    'Chicken Strips' => ['rating' => 4.7, 'ulasan' => 620],
+    'Bakso Goreng' => ['rating' => 4.6, 'ulasan' => 540],
+    'Chicken Roll' => ['rating' => 4.5, 'ulasan' => 480],
+    'Es Teh' => ['rating' => 4.8, 'ulasan' => 2800], 
+    'Ayam Dada + Nasi + Es Teh' => ['rating' => 4.8, 'ulasan' => 1985],
+    'Ayam Sayap + Nasi + Es Teh' => ['rating' => 4.6, 'ulasan' => 820],
+    'Ayam Sambal Geprek + Nasi + Es teh' => ['rating' => 4.9, 'ulasan' => 2430], 
+    'Ayam Sambal Ijo + Nasi + Es Teh' => ['rating' => 4.7, 'ulasan' => 1050],
+    '3 Pcs Paha Bawah' => ['rating' => 4.8, 'ulasan' => 1650],
+    '5 Pcs Paha Bawah' => ['rating' => 4.9, 'ulasan' => 1120],
+    '7 Pcs Paha Bawah' => ['rating' => 4.8, 'ulasan' => 890]
+];
+
+// Tentukan rating dan ulasan berdasarkan nama menu, jika tidak ada di list gunakan default 450
+$base_rating = isset($baseline_data[$menu['name']]) ? $baseline_data[$menu['name']]['rating'] : 4.6;
+$base_ulasan = isset($baseline_data[$menu['name']]) ? $baseline_data[$menu['name']]['ulasan'] : 450;
 
 $menu['rating'] = $base_rating;
 $menu['ulasan'] = $base_ulasan;
@@ -199,7 +223,7 @@ $isHabis = ((int)$menu['stok'] <= 0);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <title>Pesan <?= htmlspecialchars($menu['name']) ?> - Sabana</title>
+    <title>Pesan Menu<?= htmlspecialchars($menu['name']) ?> - Sabana</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -342,38 +366,52 @@ $isHabis = ((int)$menu['stok'] <= 0);
         <div class="container mx-auto px-6">
             <h2 class="text-3xl md:text-4xl font-black text-gray-900 tracking-wide uppercase text-center mb-12">Menu Rekomendasi Lainnya</h2>
             <div class="menu-rekomendasi">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Grid dengan jarak yang lebih lega (gap-10) agar saat zoom tidak tabrakan -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
                     <?php
                     $rekom = [
                         ['id' => 1, 'img' => 'Ayam_dada.png', 'name' => 'Ayam Goreng Dada', 'price' => 11000, 'desc' => $deskripsi_baru['Ayam Goreng Dada'], 'rating' => 4.5, 'ulasan' => 56, 'stok' => 8, 'kategori' => 'Reguler'],
                         ['id' => 5, 'img' => 'burger_ayam.png', 'name' => 'Burger Ayam', 'price' => 12000, 'desc' => $deskripsi_baru['Burger Ayam'], 'rating' => 4.5, 'ulasan' => 56, 'stok' => 8, 'kategori' => 'Tambahan'],
-                        ['id' => 14, 'img' => 'paket1.png', 'name' => 'Paket Dada + Nasi + Teh', 'price' => 20000, 'desc' => $deskripsi_baru['Ayam Dada + Nasi + Es Teh'], 'rating' => 4.5, 'ulasan' => 56, 'stok' => 8, 'kategori' => 'Paket'],
-                        ['id' => 18, 'img' => 'combo1.png', 'name' => 'Combo 3 Pcs Paha Bawah', 'price' => 25000, 'desc' => $deskripsi_baru['3 Pcs Paha Bawah'], 'rating' => 4.5, 'ulasan' => 56, 'stok' => 8, 'kategori' => 'Combo']
+                        ['id' => 14, 'img' => 'paket1.png', 'name' => 'Paket Dada + Nasi + Teh', 'price' => 20000, 'desc' => $deskripsi_baru['Ayam Dada + Nasi + Es Teh'], 'rating' => 4.5, 'ulasan' => 56, 'stok' => 8, 'kategori' => 'Paket', 'badge' => 'PAKET'],
+                        ['id' => 18, 'img' => 'combo1.png', 'name' => 'Combo 3 Pcs Paha Bawah', 'price' => 25000, 'desc' => $deskripsi_baru['3 Pcs Paha Bawah'], 'rating' => 4.5, 'ulasan' => 56, 'stok' => 8, 'kategori' => 'Combo', 'badge' => 'HEMAT']
                     ];
                     foreach ($rekom as $r):
                         $itemData = $r;
                         $isHabisRekom = ((int)$r['stok'] <= 0);
                     ?>
-                        <a href="pesan.php?menu=<?= urlencode(json_encode($itemData)) ?>" class="group flex flex-col items-center cursor-pointer w-full no-underline h-full">
-                            <div class="transition-all duration-500 ease-in-out group-hover:-translate-y-2 group-hover:scale-105 w-full relative">
-                                <div class="menu-box w-full relative">
-                                    <img src="../img/<?= $r['img'] ?>" class="menu-img" <?= $isHabisRekom ? 'style="filter: grayscale(100%); opacity: 0.6;"' : '' ?> />
-                                    
-                                    <?php if($isHabisRekom): ?>
+                        <a href="pesan.php?menu=<?= urlencode(json_encode($itemData)) ?>" class="group flex flex-col cursor-pointer w-full no-underline h-full">
+                            
+                            <!-- WADAH GAMBAR TANPA KOTAK (Boxless) -->
+                            <div class="w-full aspect-square relative flex items-center justify-center mb-4 md:mb-6 bg-transparent overflow-visible">
+                                <?php if (isset($r['badge'])): ?>
+                                    <div class="absolute top-0 right-0 md:top-2 md:right-2 bg-sabanaGold text-sabanaDark text-[10px] md:text-xs font-extrabold px-3 py-1 rounded-full z-30 drop-shadow-sm"><?= $r['badge'] ?></div>
+                                <?php endif; ?>
+
+                                <!-- EFEK ZOOM 30% DIPAKSAKAN MENGGUNAKAN !IMPORTANT -->
+                                <img src="../img/<?= $r['img'] ?>" alt="<?= $r['name'] ?>" 
+                                     class="w-full h-full object-contain drop-shadow-md transition-all duration-500 ease-out <?= $isHabisRekom ? 'grayscale opacity-60' : 'group-hover:!scale-[1.2] group-hover:!-translate-y-4 group-hover:drop-shadow-2xl' ?>" style="max-width: 100%; max-height: 100%;" />
+                                
+                                <?php if ($isHabisRekom): ?>
                                     <div class="absolute inset-0 z-20 flex items-center justify-center pointer-events-none transition-all duration-300">
-                                        <span class="text-red-600 font-black text-xl md:text-2xl uppercase" style="text-shadow: 0 0 8px rgba(255,255,255,1);">HABIS</span>
+                                        <span class="text-red-600 font-black text-xl md:text-2xl drop-shadow-[0_0_8px_rgba(255,255,255,1)] tracking-widest uppercase">HABIS</span>
                                     </div>
-                                    <?php endif; ?>
-                                </div>
+                                <?php endif; ?>
                             </div>
-                            <div class="w-full mt-3 text-center">
-                                <h3 class="menu-title font-extrabold <?= $isHabisRekom ? 'text-red-500' : '' ?>"><?= $r['name'] ?></h3>
+                            
+                            <!-- TEKS NAMA MENU -->
+                            <div class="w-full mt-auto text-center transition-transform duration-500 ease-out <?= $isHabisRekom ? '' : 'group-hover:!-translate-y-2' ?>">
+                                <h3 class="text-lg md:text-xl font-black <?= $isHabisRekom ? 'text-red-500' : 'text-gray-900' ?> leading-tight tracking-tight"><?= $r['name'] ?></h3>
                             </div>
+                            
                         </a>
                     <?php endforeach; ?>
                 </div>
             </div>
-            <div class="flex justify-center mt-12"><button id="lihatSemuaMenuBtn" class="bg-sabanaRed text-white px-10 py-4 rounded-full font-bold text-xl hover:bg-red-700 hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-3"><i class="fa-solid fa-list text-2xl"></i> Lihat Semua Menu</button></div>
+            <div class="flex justify-center mt-12">
+                <button id="lihatSemuaMenuBtn" class="bg-sabanaRed text-white px-10 py-4 rounded-full font-bold text-xl hover:bg-red-700 hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-3 active:bg-[#7f1d1d]">
+                    <i class="fa-solid fa-list text-2xl"></i> Lihat Semua Menu
+                </button>
+            </div>
         </div>
     </section>
 

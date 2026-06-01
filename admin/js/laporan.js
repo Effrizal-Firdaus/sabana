@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
     tglSelesai.value = today.toISOString().slice(0,10);
     tglMulai.value = oneMonthAgo.toISOString().slice(0,10);
 
-    // Konfigurasi Global Chart.js
     Chart.defaults.font.family = "'Poppins', sans-serif";
     Chart.defaults.color = '#64748b'; 
     Chart.defaults.plugins.tooltip.backgroundColor = '#1e293b'; 
@@ -22,13 +21,12 @@ document.addEventListener('DOMContentLoaded', function() {
     Chart.defaults.plugins.tooltip.titleFont = { size: 13, weight: '600' };
     Chart.defaults.plugins.tooltip.bodyFont = { size: 13 };
 
-    // Fungsi Pembantu: Menentukan warna berdasarkan nama menu (Kategori)
     function getMenuColor(namaMenu) {
         const name = namaMenu.toLowerCase();
-        if (name.includes('pcs') || name.includes('combo')) return '#a855f7'; // Ungu (Combo)
-        if (name.includes('paket') || name.includes('+')) return '#ef4444'; // Merah (Paket)
-        if (name.includes('ayam goreng')) return '#f97316'; // Oranye (Reguler)
-        return '#3b82f6'; // Biru (Tambahan)
+        if (name.includes('pcs') || name.includes('combo')) return '#a855f7'; 
+        if (name.includes('paket') || name.includes('+')) return '#ef4444'; 
+        if (name.includes('ayam goreng')) return '#f97316'; 
+        return '#3b82f6'; 
     }
 
     async function loadLaporan() {
@@ -107,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += `<tr class="hover:bg-gray-50 transition duration-150">
                                 <td class="p-4 font-medium">${row.tanggal}</td>
                                 <td class="p-4 text-center"><span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md font-medium text-xs">${row.jumlah} Order</span></td>
-                                <td class="p-4 font-semibold text-[#4a5d42] text-right">Rp ${row.total.toLocaleString('id-ID')}</td>
+                                <td class="p-4 font-semibold text-emerald-600 text-right">Rp ${row.total.toLocaleString('id-ID')}</td>
                              </tr>`;
                 });
             } else {
@@ -121,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="mt-6 flex justify-end">
                     <div class="bg-white border border-gray-100 shadow-sm rounded-xl px-6 py-4 text-right">
                         <span class="text-xs font-medium text-gray-400 uppercase tracking-wider block">Akumulasi Pendapatan</span>
-                        <span class="text-2xl font-black text-[#4a5d42] mt-0.5 block">Rp ${totalKeseluruhan.toLocaleString('id-ID')}</span>
+                        <span class="text-2xl font-black text-emerald-600 mt-0.5 block">Rp ${totalKeseluruhan.toLocaleString('id-ID')}</span>
                     </div>
                 </div>`;
             
@@ -136,8 +134,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         datasets: [{
                             label: 'Pendapatan',
                             data: data.laporan.map(row => row.total),
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)', // Fill area warna solid transparan
-                            borderColor: '#10b981', // Solid Emerald 500
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderColor: '#10b981', 
                             borderWidth: 3,
                             pointBackgroundColor: '#ffffff',
                             pointBorderColor: '#10b981',
@@ -204,8 +202,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (hasData) {
                 const ctx = document.getElementById('laporanChart').getContext('2d');
-                
-                // Menerapkan array warna solid berdasarkan kategori menu
                 const dynamicColors = data.laporan.map(item => getMenuColor(item.nama_menu));
 
                 currentChartInstance = new Chart(ctx, {
@@ -215,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         datasets: [{
                             data: data.laporan.map(item => item.total_terjual),
                             backgroundColor: dynamicColors,
-                            hoverBackgroundColor: dynamicColors, // Tetap solid saat di-hover
+                            hoverBackgroundColor: dynamicColors, 
                             borderRadius: 6, 
                             borderSkipped: false,
                             barThickness: 16 
@@ -260,22 +256,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         
             if (hasData) {
                 data.laporan.forEach(menu => {
-                    // ==========================================
-                    // LOGIKA BARU: 3 KONDISI STOK
-                    // ==========================================
                     let statusBadge = '';
                     let textStyle = '';
 
                     if (menu.stok === 0) {
-                        // KONDISI 1: HABIS (Merah)
                         statusBadge = '<span class="bg-red-50 text-red-600 px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 border border-red-100"><span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Habis</span>';
                         textStyle = 'text-red-600 font-bold text-base';
                     } else if (menu.stok <= 5) {
-                        // KONDISI 2: HAMPIR HABIS (Oranye)
                         statusBadge = '<span class="bg-orange-50 text-orange-600 px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 border border-orange-100"><span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span> Hampir Habis</span>';
                         textStyle = 'text-orange-600 font-bold text-base';
                     } else {
-                        // KONDISI 3: TERSEDIA (Hijau)
                         statusBadge = '<span class="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 border border-emerald-100"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Tersedia</span>';
                         textStyle = 'text-emerald-600 font-semibold';
                     }
@@ -296,13 +286,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (hasData) {
                 const ctx = document.getElementById('laporanChart').getContext('2d');
                 
-                // ==========================================
-                // LOGIKA BARU: 3 WARNA GRAFIK
-                // ==========================================
                 const solidStatusColors = data.laporan.map(menu => {
-                    if (menu.stok === 0) return '#ef4444'; // Merah solid untuk Habis
-                    if (menu.stok <= 5) return '#f97316';  // Oranye solid untuk Hampir Habis
-                    return '#10b981';                      // Hijau solid untuk Tersedia
+                    if (menu.stok === 0) return '#ef4444'; 
+                    if (menu.stok <= 5) return '#f97316';  
+                    return '#10b981';                      
                 });
 
                 currentChartInstance = new Chart(ctx, {
@@ -334,9 +321,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ==========================================================
-    // LOGIKA EXCELJS: EXPORT DATA + GAMBAR GRAFIK KE .XLSX
-    // ==========================================================
     document.getElementById('exportExcelBtn').addEventListener('click', async () => {
         const tipe = tipeLaporan.value;
         const mulai = tglMulai.value;
@@ -348,18 +332,15 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Ubah teks tombol jadi loading
         const btn = document.getElementById('exportExcelBtn');
         const originalText = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses Excel...';
         btn.disabled = true;
 
         try {
-            // 1. Buat File Workbook Excel Baru
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet('Laporan Sabana');
 
-            // 2. Siapkan Header dan Data Baris
             let columns = [];
             let rows = [];
 
@@ -374,33 +355,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 rows = window.currentLaporanData.map(item => [item.nama_menu, item.stok]);
             }
 
-            // 3. Tulis Header ke Excel & Beri Warna Hijau Sabana
             worksheet.addRow(columns);
             worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-            worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4A5D42' } };
+            worksheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF059669' } };
 
-            // 4. Masukkan semua data ke tabel Excel
             rows.forEach(row => worksheet.addRow(row));
-
-            // Lebarkan kolom agar rapi
             worksheet.columns.forEach(column => { column.width = 25; });
 
-            // 5. AMBIL GAMBAR DARI GRAFIK CHART.JS (Ajaib!)
-            // Ini akan mengambil kanvas grafik dan mengubahnya jadi file gambar Base64
             const base64Image = currentChartInstance.toBase64Image();
             const imageId = workbook.addImage({
                 base64: base64Image,
                 extension: 'png',
             });
 
-            // 6. Tempelkan gambar ke dalam Excel (Beri jarak 2 baris di bawah tabel)
             const startRowForImage = rows.length + 3; 
             worksheet.addImage(imageId, {
                 tl: { col: 0, row: startRowForImage },
-                ext: { width: 800, height: 400 } // Ukuran gambar di dalam Excel
+                ext: { width: 800, height: 400 } 
             });
 
-            // 7. Proses Download File Asli .xlsx
             const buffer = await workbook.xlsx.writeBuffer();
             saveAs(new Blob([buffer]), `Laporan_Sabana_${tipe}_${mulai}_sd_${selesai}.xlsx`);
             
@@ -410,7 +383,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error("Gagal export excel:", err);
             if (typeof showToast === 'function') showToast('Gagal membuat file Excel', 'error');
         } finally {
-            // Kembalikan tombol seperti semula
             btn.innerHTML = originalText;
             btn.disabled = false;
         }

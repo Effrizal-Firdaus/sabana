@@ -11,7 +11,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Menu - Sabana Fried Chicken</title>
+    <title>Kelola Menu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -29,7 +29,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
         <!-- Sidebar -->
         <div class="w-80 bg-gradient-to-br from-[#2c3e50] to-[#34495e] text-white fixed h-full overflow-y-auto shadow-lg z-30">
             <div class="p-6">
-                <div class="flex items-center gap-3 bg-[#4a5d42]/30 p-4 rounded-xl mb-8">
+                <div class="flex items-center gap-3 bg-emerald-600/30 p-4 rounded-xl mb-8">
                     <i class="fa-solid fa-user-shield text-3xl"></i>
                     <h2 class="text-xl font-bold whitespace-nowrap">Admin Panel</h2>
                 </div>
@@ -52,7 +52,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                             </a>
                         </div>
                     </div>
-                    <a href="kelola_menu.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 bg-[#4a5d42] text-white shadow-lg shadow-[#4a5d42]/40 border-l-4 border-green-300 font-semibold">
+                    <a href="kelola_menu.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 bg-emerald-600 text-white shadow-lg shadow-emerald-600/40 border-l-4 border-emerald-300 font-semibold">
                         <i class="fa-solid fa-utensils w-5"></i><span>Kelola Menu</span>
                     </a>
                     <a href="pesanan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-2">
@@ -72,9 +72,13 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                     <a href="ulasan.php" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-gray-300 hover:bg-white/10 hover:text-white hover:translate-x-2">
                         <i class="fa-solid fa-star w-5"></i> Ulasan
                     </a>
-                    <a href="#" id="btnTriggerLogout" class="nav-item-admin flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 text-[#00f5ec] hover:bg-[#00f5ec]/20 hover:text-white mt-8 pt-4 border-t border-gray-700">
-                        <i class="fa-solid fa-sign-out-alt w-5"></i><span>Logout</span>
-                    </a>
+                    <!-- Pembatas visual -->
+                    <div class="mt-8 pt-4 border-t border-gray-700 w-full">
+                        <a href="#" id="btnTriggerLogout" class="flex items-center justify-center gap-3 px-4 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold transition-all duration-300 shadow-md hover:shadow-rose-500/30 active:scale-95 w-full">
+                            <i class="fa-solid fa-sign-out-alt text-lg"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
                 </nav>
             </div>
         </div>
@@ -84,8 +88,8 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
             <header class="sticky top-0 z-40 px-10 pt-6 pb-4 bg-slate-50/90 backdrop-blur-md border-b border-gray-200/50">
                 <div class="flex justify-between items-center bg-white p-4 pl-5 rounded-2xl shadow-sm border border-gray-100 transition-all hover:shadow-md">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#4a5d42]/20 to-[#4a5d42]/5 flex items-center justify-center border border-[#4a5d42]/10">
-                            <i class="fa-solid fa-utensils text-[#4a5d42] text-xl shadow-sm"></i>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-600/20 to-emerald-600/5 flex items-center justify-center border border-emerald-600/10">
+                            <i class="fa-solid fa-utensils text-emerald-600 text-xl shadow-sm"></i>
                         </div>
                         <div>
                             <h1 class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 tracking-tight">Manajemen Menu</h1>
@@ -93,20 +97,20 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                         </div>
                     </div>
                     <div class="flex items-center gap-5 pr-2">
-                        <button class="relative w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 hover:text-[#4a5d42] transition-colors border border-gray-200 focus:outline-none shadow-sm active:scale-95">
+                        <button class="relative w-10 h-10 rounded-full bg-gray-50 hover:bg-gray-100 flex items-center justify-center text-gray-500 hover:text-emerald-600 transition-colors border border-gray-200 focus:outline-none shadow-sm active:scale-95">
                             <i class="fa-regular fa-bell"></i>
                         </button>
                         <div class="w-px h-8 bg-gray-200"></div>
                         <div class="user-info flex items-center gap-3 bg-white border border-transparent text-gray-700 rounded-full cursor-pointer transition-all duration-300 hover:bg-gray-50 active:scale-95 group">
                             <div class="relative">
-                                <img src="https://ui-avatars.com/api/?name=Admin&background=4a5d42&color=fff&rounded=true&bold=true" alt="Admin" class="w-10 h-10 rounded-full shadow-sm group-hover:scale-105 transition-transform">
-                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                                <img src="https://ui-avatars.com/api/?name=Admin&background=059669&color=fff&rounded=true&bold=true" alt="Admin" class="w-10 h-10 rounded-full shadow-sm group-hover:scale-105 transition-transform">
+                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full"></div>
                             </div>
                             <div class="flex flex-col pr-2">
-                                <span class="font-extrabold text-sm text-gray-800 leading-none group-hover:text-[#4a5d42] transition-colors">Administrator</span>
+                                <span class="font-extrabold text-sm text-gray-800 leading-none group-hover:text-emerald-600 transition-colors">Administrator</span>
                                 <span class="text-[10px] font-bold text-gray-400 mt-1">Super Admin</span>
                             </div>
-                            <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 pr-2 group-hover:text-[#4a5d42] transition-colors"></i>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 pr-2 group-hover:text-emerald-600 transition-colors"></i>
                         </div>
                     </div>
                 </div>
@@ -116,10 +120,10 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                 <!-- Action Bar -->
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 w-full">
                     <div class="relative w-full sm:max-w-md group">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-[#4a5d42] transition-colors duration-300"></i>
-                        <input type="text" id="searchMenu" placeholder="Cari nama menu yang anda inginkan..." class="w-full pl-11 pr-4 py-3 bg-white border-2 border-transparent hover:border-[#4a5d42]/50 focus:border-[#4a5d42] rounded-2xl focus:outline-none focus:ring-4 focus:ring-[#4a5d42]/10 shadow-sm hover:shadow-md transition-all duration-300 text-sm text-gray-800">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-emerald-600 transition-colors duration-300"></i>
+                        <input type="text" id="searchMenu" placeholder="Cari nama menu yang anda inginkan..." class="w-full pl-11 pr-4 py-3 bg-white border-2 border-transparent hover:border-emerald-600/50 focus:border-emerald-600 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-600/10 shadow-sm hover:shadow-md transition-all duration-300 text-sm text-gray-800">
                     </div>
-                    <button id="btnTambahMenu" class="w-full sm:w-auto bg-gradient-to-r from-[#2c3e50] to-[#4a5d42] hover:from-[#1a252f] hover:to-[#35432f] text-white px-6 py-3 rounded-2xl font-bold transition-all duration-200 active:scale-95 shadow-md shadow-[#4a5d42]/20 flex items-center justify-center gap-2">
+                    <button id="btnTambahMenu" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl font-bold transition-all duration-200 active:scale-95 shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-plus text-sm"></i> Tambah Menu Baru
                     </button>
                 </div>
@@ -141,7 +145,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
         </div>
     </div>
 
-    <!-- ================= MODAL TAMBAH / EDIT MENU (dengan upload gambar) ================= -->
+    <!-- ================= MODAL TAMBAH / EDIT MENU ================= -->
     <div id="menuModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="menuModalOverlay"></div>
         <div class="bg-white rounded-2xl shadow-2xl p-8 z-10 w-full max-w-lg transform scale-95 opacity-0 transition-all duration-300" id="menuModalBox">
@@ -156,13 +160,13 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
 
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Nama Menu</label>
-                    <input type="text" id="menuNama" required placeholder="Contoh: Ayam Geprek Spesial" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4a5d42] text-sm">
+                    <input type="text" id="menuNama" required placeholder="Contoh: Ayam Geprek Spesial" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 text-sm">
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Kategori</label>
-                        <select id="menuKategori" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4a5d42] text-sm cursor-pointer">
+                        <select id="menuKategori" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 text-sm cursor-pointer">
                             <option value="Reguler">Reguler</option>
                             <option value="Tambahan">Tambahan</option>
                             <option value="Paket">Paket</option>
@@ -171,17 +175,17 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Harga (Rp)</label>
-                        <input type="number" id="menuHarga" required placeholder="Contoh: 15000" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4a5d42] text-sm">
+                        <input type="number" id="menuHarga" required placeholder="Contoh: 15000" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Stok (Pcs)</label>
-                        <input type="number" id="menuStok" required placeholder="Contoh: 50" min="0" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4a5d42] text-sm font-bold text-gray-800">
+                        <input type="number" id="menuStok" required placeholder="Contoh: 50" min="0" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 text-sm font-bold text-gray-800">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Deskripsi / Rincian Menu</label>
-                    <textarea id="menuDeskripsi" rows="3" placeholder="Contoh: 1 Ayam Dada + Nasi + Es Teh Manis" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#4a5d42] text-sm resize-none"></textarea>
+                    <textarea id="menuDeskripsi" rows="3" placeholder="Contoh: 1 Ayam Dada + Nasi + Es Teh Manis" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 text-sm resize-none"></textarea>
                 </div>
 
                 <!-- Input Gambar -->
@@ -192,7 +196,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
                             <img id="previewGambar" src="../../img/default.png" class="w-full h-full object-cover" onerror="this.src='../../img/Logo_Sabana.png'">
                         </div>
                         <div class="flex-1">
-                            <input type="file" id="menuGambar" accept="image/*" class="w-full text-sm text-gray-500 file:mr-2 file:py-2 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#4a5d42] file:text-white hover:file:bg-[#35432f]">
+                            <input type="file" id="menuGambar" accept="image/*" class="w-full text-sm text-gray-500 file:mr-2 file:py-2 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-700">
                             <p class="text-xs text-gray-400 mt-1">* Kosongkan jika tidak ingin mengubah gambar</p>
                         </div>
                     </div>
@@ -226,14 +230,14 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
     <div id="logoutModal" class="fixed inset-0 z-50 hidden flex items-center justify-center">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="logoutOverlay"></div>
         <div class="bg-white rounded-2xl shadow-2xl p-8 z-10 w-full max-w-sm transform scale-95 opacity-0 transition-all duration-300 flex flex-col items-center text-center" id="logoutModalBox">
-            <div class="w-16 h-16 bg-[#4a5d42]/10 rounded-full flex items-center justify-center mb-5 shadow-inner">
-                <i class="fa-solid fa-arrow-right-from-bracket text-3xl text-[#4a5d42] ml-1"></i>
+            <div class="w-16 h-16 bg-emerald-600/10 rounded-full flex items-center justify-center mb-5 shadow-inner">
+                <i class="fa-solid fa-arrow-right-from-bracket text-3xl text-emerald-600 ml-1"></i>
             </div>
             <h3 class="text-xl font-extrabold text-gray-800 mb-2">Konfirmasi Logout</h3>
             <p class="text-gray-500 mb-8 text-sm">Apakah Anda yakin ingin keluar dari sesi ini?</p>
             <div class="flex gap-4 w-full">
-                <button id="btnCancelLogout" class="modal-btn-cancel flex-1 py-3 rounded-xl font-bold">Tidak</button>
-                <a href="process/logout.php" class="modal-btn-confirm flex-1 py-3 rounded-xl font-bold flex items-center justify-center">Iya, Logout</a>
+                <button id="btnCancelLogout" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded-xl font-bold text-center transition">Tidak</button>
+                <a href="process/logout.php" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold flex items-center justify-center shadow-md transition">Iya, Logout</a>
             </div>
         </div>
     </div>

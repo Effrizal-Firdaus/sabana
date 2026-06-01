@@ -21,9 +21,9 @@
     cursor: pointer;
 }
 .stat-card-admin:hover {
-    border-color: #4a5d42; /* Garis tepi hijau */
+    border-color: #059669; /* Garis tepi hijau emerald */
     transform: translateY(-8px); /* Efek maju ke depan / melayang */
-    box-shadow: 0 15px 30px -5px rgba(74, 93, 66, 0.25);
+    box-shadow: 0 15px 30px -5px rgba(5, 150, 105, 0.25); /* Bayangan hijau emerald */
 }
 .stat-card-admin:active {
     animation: ngeperCard 0.4s forwards; /* Efek ngeper saat dipencet */
@@ -111,9 +111,9 @@
     cursor: pointer;
 }
 .order-card:hover {
-    border-color: #4a5d42; /* Garis tepi hijau */
+    border-color: #059669; /* Garis tepi hijau emerald */
     transform: translateY(-6px); /* Efek maju ke depan */
-    box-shadow: 0 15px 35px -5px rgba(74, 93, 66, 0.15);
+    box-shadow: 0 15px 35px -5px rgba(5, 150, 105, 0.15); /* Bayangan hijau emerald */
 }
 .order-card:active {
     animation: ngeperCard 0.4s forwards; /* Efek ngeper */
@@ -141,15 +141,15 @@
 }
 
 .modal-btn-confirm {
-    background: linear-gradient(to right, #2c3e50, #4a5d42);
+    background: #059669; /* Emerald 600 Solid */
     color: #ffffff;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, filter 0.2s;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, background-color 0.3s;
 }
 
 .modal-btn-confirm:hover {
+    background: #047857; /* Emerald 700 Hover */
     transform: translateY(-4px); 
-    box-shadow: 0 10px 22px rgba(74, 93, 66, 0.3);
-    filter: brightness(1.1); 
+    box-shadow: 0 10px 22px rgba(5, 150, 105, 0.3); /* Bayangan hijau emerald */
 }
 
 .modal-btn-confirm:active {
@@ -176,8 +176,8 @@
 
 .modern-card:hover {
     transform: translateY(-5px);
-    border-color: #4a5d42;
-    box-shadow: 0 15px 30px -5px rgba(74, 93, 66, 0.12);
+    border-color: #059669; /* Emerald 600 */
+    box-shadow: 0 15px 30px -5px rgba(5, 150, 105, 0.12); /* Bayangan hijau emerald */
 }
 
 .modern-card:active {
@@ -192,14 +192,14 @@
     align-items: center;
     justify-content: center;
     border-radius: 1rem;
-    background: linear-gradient(135deg, rgba(74, 93, 66, 0.1), rgba(74, 93, 66, 0.02));
-    color: #4a5d42;
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(5, 150, 105, 0.02)); /* Gradient hijau emerald ringan */
+    color: #059669; /* Emerald 600 */
     font-size: 1.5rem;
     transition: all 0.3s ease;
 }
 
 .modern-card:hover .icon-box {
-    background: #4a5d42;
+    background: #059669; /* Emerald 600 */
     color: #ffffff;
     transform: scale(1.1) rotate(5deg);
 }
@@ -282,16 +282,4 @@
 }
 .toast-info .toast-icon i {
     color: #3b82f6;
-}
-
-/* ===== NOTIFIKASI BEL ===== */
-@keyframes bellRing {
-    0% { transform: rotate(0); }
-    25% { transform: rotate(15deg); }
-    50% { transform: rotate(-15deg); }
-    75% { transform: rotate(5deg); }
-    100% { transform: rotate(0); }
-}
-.ringing i {
-    animation: bellRing 0.5s ease-in-out;
 }

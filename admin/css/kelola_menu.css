@@ -22,9 +22,9 @@
 }
 
 /* Warna Kategori */
-/* Warna Kategori */
+/* PERUBAHAN: Warna kategori "Semua" diganti ke Emerald-600 */
 .menu-filter-btn.active[data-category="semua"],
-.menu-filter-btn[data-category="semua"]:hover { background-color: #4a5d42; border-color: #4a5d42; color: white; }
+.menu-filter-btn[data-category="semua"]:hover { background-color: #059669; border-color: #059669; color: white; }
 
 .menu-filter-btn.active[data-category="Reguler"],
 .menu-filter-btn[data-category="Reguler"]:hover { background-color: #d97706; border-color: #d97706; color: white; }
@@ -37,6 +37,7 @@
 
 .menu-filter-btn.active[data-category="Paket Combo"],
 .menu-filter-btn[data-category="Paket Combo"]:hover { background-color: #9333ea; border-color: #9333ea; color: white; }
+
 /* ================= EFEK FISIK KARTU MENU (MAJU & NGEPER) ================= */
 
 .modern-card-menu {
@@ -46,8 +47,8 @@
 
 .modern-card-menu:hover {
     transform: translateY(-10px); /* Efek maju ke depan / melayang naik yang SANGAT JELAS */
-    box-shadow: 0 25px 50px -12px rgba(74, 93, 66, 0.25); /* Bayangan melebar dramatis */
-    border-color: rgba(74, 93, 66, 0.4);
+    box-shadow: 0 25px 50px -12px rgba(5, 150, 105, 0.25); /* PERUBAHAN: Bayangan emerald */
+    border-color: rgba(5, 150, 105, 0.4); /* PERUBAHAN: Garis emerald transparan */
     z-index: 20;
 }
 

@@ -25,9 +25,8 @@ $sql = "SELECT p.id, p.total_harga, p.status, p.dibuat_pada,
         LEFT JOIN pembayaran pay ON p.id = pay.id_pesanan
         WHERE p.status = ? AND p.dikonfirmasi = 1";
 
-// Jika status 'selesai', hanya tampilkan yang belum diarsipkan (jika kolom is_archived ada)
+// Jika status 'selesai', hanya tampilkan yang belum diarsipkan
 if ($dbStatus === 'selesai') {
-    // Cek apakah kolom is_archived ada
     $colCheck = $conn->query("SHOW COLUMNS FROM pesanan LIKE 'is_archived'");
     if ($colCheck->num_rows > 0) {
         $sql .= " AND p.is_archived = 0";
@@ -61,13 +60,25 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-// Hitung statistik (totalOrders, totalCustomers, totalMenuItems, totalRevenue)
 $totalOrders = $conn->query("SELECT COUNT(*) as total FROM pesanan")->fetch_assoc()['total'];
 $totalCustomers = $conn->query("SELECT COUNT(DISTINCT id_pengguna) as total FROM pesanan")->fetch_assoc()['total'];
 $totalMenuItems = $conn->query("SELECT COUNT(*) as total FROM menu")->fetch_assoc()['total'];
-$totalRevenue = $conn->query("SELECT SUM(total_harga) as total FROM pesanan")->fetch_assoc()['total'] ?? 0;
 
-// Badges (hitung pesanan per status yang sudah dikonfirmasi, untuk status selesai abaikan yang diarsipkan)
+// ====================================================================
+// LOGIKA MODE BACA: PEMISAHAN OMZET
+// ====================================================================
+// 1. Total Keseluruhan (Grand Total)
+$totalRevenue = $conn->query("SELECT SUM(total_harga) as total FROM pesanan WHERE status = 'selesai'")->fetch_assoc()['total'] ?? 0;
+
+// 2. Total QRIS
+$qrisRevQuery = "SELECT SUM(p.total_harga) as total FROM pesanan p LEFT JOIN pembayaran pay ON p.id = pay.id_pesanan WHERE p.status = 'selesai' AND UPPER(pay.metode_pembayaran) = 'QRIS'";
+$qrisRevenue = $conn->query($qrisRevQuery)->fetch_assoc()['total'] ?? 0;
+
+// 3. Total CASH & COD
+$cashRevQuery = "SELECT SUM(p.total_harga) as total FROM pesanan p LEFT JOIN pembayaran pay ON p.id = pay.id_pesanan WHERE p.status = 'selesai' AND (UPPER(pay.metode_pembayaran) IN ('CASH', 'COD') OR pay.metode_pembayaran IS NULL)";
+$cashRevenue = $conn->query($cashRevQuery)->fetch_assoc()['total'] ?? 0;
+// ====================================================================
+
 $badges = [];
 $badgeMap = [
     'disiapkan' => 'disiapkan',
@@ -94,7 +105,9 @@ echo json_encode([
         'totalOrders'    => (int)$totalOrders,
         'totalCustomers' => (int)$totalCustomers,
         'totalMenuItems' => (int)$totalMenuItems,
-        'totalRevenue'   => (int)$totalRevenue
+        'totalRevenue'   => (int)$totalRevenue,
+        'qrisRevenue'    => (int)$qrisRevenue,
+        'cashRevenue'    => (int)$cashRevenue
     ],
     'badges' => $badges
 ]);

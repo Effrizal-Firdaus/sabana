@@ -21,6 +21,16 @@ if ($res->num_rows === 0) {
 }
 
 $row = $res->fetch_assoc();
+
+// =========================================================
+// [FITUR BARU] CEK STATUS BLOKIR (Tolak akses sebelum cek password)
+// =========================================================
+if (isset($row['status']) && $row['status'] === 'diblokir') {
+    // Arahkan kembali ke halaman login dengan pesan error khusus
+    header("Location: ../login.html?error=blocked");
+    exit;
+}
+
 $is_valid = false;
 
 // Cek password (support hash dan plain text)
@@ -38,6 +48,13 @@ if (!$is_valid) {
     header("Location: ../login.html?error=wrong_password");
     exit;
 }
+
+// =========================================================
+// [FITUR BARU] UPDATE WAKTU TERAKHIR LOGIN (Jika password benar)
+// =========================================================
+$update_waktu = $conn->prepare("UPDATE pengguna SET terakhir_login = NOW() WHERE id = ?");
+$update_waktu->bind_param("i", $row['id']);
+$update_waktu->execute();
 
 // Tentukan role
 $role = $row['peran'];

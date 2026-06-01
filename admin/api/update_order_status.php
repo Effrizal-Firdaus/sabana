@@ -7,12 +7,59 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
 }
 include_once __DIR__ . '/../../server/koneksi.php';
 
+// --- TAMBAHAN LOGIKA BRANKAS: Panggil file helper ---
+require_once 'catat_laporan.php'; 
+// ----------------------------------------------------
+
 $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
 $action = $_POST['action'] ?? 'next';
 if (!$id) {
     echo json_encode(['success' => false, 'message' => 'ID tidak valid']);
     exit;
 }
+
+// =========================================================================
+// BLOK BARU: LOGIKA MENOLAK / MENGHAPUS PESANAN MASUK
+// =========================================================================
+if ($action === 'reject') {
+    $conn->begin_transaction();
+    try {
+        // 1. Ambil data detail pesanan untuk melihat jumlah ayam yang di-booking
+        $q_stok = "SELECT id_menu, jumlah FROM detail_pesanan WHERE id_pesanan = ?";
+        $stmt_stok = $conn->prepare($q_stok);
+        $stmt_stok->bind_param('i', $id);
+        $stmt_stok->execute();
+        $res_stok = $stmt_stok->get_result();
+
+        // 2. Kembalikan stok ayam/menu tersebut ke tabel menu
+        $q_update_stok = "UPDATE menu SET stok = stok + ? WHERE id = ?";
+        $stmt_update_stok = $conn->prepare($q_update_stok);
+        while ($row = $res_stok->fetch_assoc()) {
+            $stmt_update_stok->bind_param('ii', $row['jumlah'], $row['id_menu']);
+            $stmt_update_stok->execute();
+        }
+        $stmt_stok->close();
+        $stmt_update_stok->close();
+
+        // 3. Hapus semua jejak pesanan di tabel anak (Relasi)
+        // Harus dihapus dari anak dulu agar tidak error Foreign Key
+        $conn->query("DELETE FROM detail_pesanan WHERE id_pesanan = $id");
+        $conn->query("DELETE FROM pembayaran WHERE id_pesanan = $id");
+        $conn->query("DELETE FROM pengiriman WHERE id_pesanan = $id");
+        $conn->query("DELETE FROM rating WHERE id_pesanan = $id");
+
+        // 4. Terakhir, hapus pesanan utama
+        $conn->query("DELETE FROM pesanan WHERE id = $id");
+
+        $conn->commit();
+        echo json_encode(['success' => true, 'message' => 'Pesanan dibatalkan dan stok dikembalikan.']);
+    } catch (Exception $e) {
+        $conn->rollback();
+        echo json_encode(['success' => false, 'message' => 'Gagal membatalkan pesanan: ' . $e->getMessage()]);
+    }
+    exit;
+}
+// =========================================================================
 
 if ($action === 'confirm') {
     // Cek apakah pesanan ada dan status 'disiapkan' serta belum dikonfirmasi
@@ -109,25 +156,40 @@ if ($idx !== false && $idx < count($statusOrder)-1) {
         $update->bind_param('si', $newStatus, $id);
         $update->execute();
         $update->close();
+        
         if ($newStatus === 'selesai') {
-            $payQuery = "SELECT metode_pembayaran FROM pembayaran WHERE id_pesanan = ?";
+            // --- TAMBAHAN LOGIKA BRANKAS: Ambil total harga dan metode bayar ---
+            $payQuery = "SELECT p.total_harga, b.metode_pembayaran 
+                         FROM pesanan p 
+                         JOIN pembayaran b ON p.id = b.id_pesanan 
+                         WHERE p.id = ?";
             $payStmt = $conn->prepare($payQuery);
             $payStmt->bind_param('i', $id);
             $payStmt->execute();
             $payRes = $payStmt->get_result();
             $payRow = $payRes->fetch_assoc();
             $payStmt->close();
-            if ($payRow && $payRow['metode_pembayaran'] === 'cash') {
-                $updatePay = $conn->prepare("UPDATE pembayaran SET status_pembayaran = 'sudah_bayar', waktu_bayar = NOW() WHERE id_pesanan = ?");
-                $updatePay->bind_param('i', $id);
-                $updatePay->execute();
-                $updatePay->close();
+            
+            if ($payRow) {
+                // 1. Eksekusi Pembayaran Cash (Kode Lama)
+                if ($payRow['metode_pembayaran'] === 'cash') {
+                    $updatePay = $conn->prepare("UPDATE pembayaran SET status_pembayaran = 'sudah_bayar', waktu_bayar = NOW() WHERE id_pesanan = ?");
+                    $updatePay->bind_param('i', $id);
+                    $updatePay->execute();
+                    $updatePay->close();
+                }
+                
+                // 2. EKSEKUSI BRANKAS PERMANEN (Kode Baru)
+                catatPendapatanPermanen($conn, $id, $payRow['total_harga'], $payRow['metode_pembayaran']);
             }
+            // --------------------------------------------------------------------
+
             $updateKirim = $conn->prepare("UPDATE pengiriman SET status_pengiriman = 'diterima', waktu_pengiriman = NOW() WHERE id_pesanan = ?");
             $updateKirim->bind_param('i', $id);
             $updateKirim->execute();
             $updateKirim->close();
         }
+        
         $conn->commit();
         echo json_encode(['success' => true, 'newStatus' => $newStatus]);
     } catch (Exception $e) {
