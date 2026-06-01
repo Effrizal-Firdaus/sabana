@@ -541,12 +541,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                             <img id="profileImg" src="${userData.foto || '../../img/avatar-saya.png'}" class="w-full h-full object-cover" onerror="this.src='../../img/avatar-saya.png'">
                                         </div>
                                     </div>
-                                    <label class="absolute bottom-0 right-0 bg-sabanaRed hover:bg-red-700 text-white rounded-full p-2 cursor-pointer shadow-lg transition-all hover:scale-110">
+                                    <label class="absolute bottom-[-18px] left-1/2 -translate-x-1/2 bg-sabanaRed hover:bg-red-700 text-white rounded-full w-9 h-9 flex items-center justify-center cursor-pointer shadow-lg transition-all hover:scale-110">
                                         <i class="fa-solid fa-camera text-sm"></i>
                                         <input type="file" id="uploadFoto" class="hidden" accept="image/*">
                                     </label>
                                 </div>
-                                <p class="text-xs text-gray-400 mt-3">Klik kamera untuk ganti foto</p>
+                                <p class="text-xs text-gray-400 mt-5">Klik kamera untuk ganti foto</p>
                                 <button id="removeFotoBtn" type="button" class="mt-3 hidden px-4 py-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-lg text-sm font-medium transition-all">
                                     <i class="fa-solid fa-trash mr-1"></i> Hapus Foto
                                 </button>

@@ -10,7 +10,7 @@ $nama_user   = $sudah_login ? htmlspecialchars($_SESSION['user']['nama']) : '';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sabana Fried Chicken</title>
-
+    <link rel="icon" href="../../img/Logo_Sabana1.png" type="image/png">
     <!-- CDN Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 

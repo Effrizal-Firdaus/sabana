@@ -12,6 +12,7 @@ if (!isset($_SESSION['admin']) || $_SESSION['admin']['peran'] !== 'admin') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan & Statistik Pendapatan</title>
+    <link rel="icon" href="../../img/admin_sabana.png" type="image/png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
